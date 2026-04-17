@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk Akun - Fasih MA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="auth-page">
+
+    <div class="auth-back">
+        <a href="index.html" class="btn btn-outline back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</a>
+    </div>
+
+    <main class="auth-wrapper container">
+        <div class="auth-card">
+
+            <div class="auth-header">
+                <div class="logo auth-logo">
+                    <span class="logo-text">Fasih <span class="logo-accent">MA</span></span>
+                </div>
+                <h1 class="auth-title">Selamat Datang Kembali</h1>
+                <p class="auth-subtitle">Silakan masuk untuk melanjutkan proses belajarmu.</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Masukkan email terdaftar" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Kata Sandi</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Masukkan kata sandi" required>
+                        <i class="fa-regular fa-eye password-toggle"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large auth-submit">
+                    Masuk Sekarang <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Belum punya akun? <a href="register.html" class="auth-link">Daftar di sini</a></p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.querySelector('.auth-submit');
+            const originalText = submitBtn.innerHTML;
+            
+            // Ubah tombol jadi status loading
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sedang memeriksa...';
+            submitBtn.disabled = true;
+
+            const loginData = {
+                email: document.getElementById('email').value.trim().toLowerCase(),
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(loginData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Simpan data user ke localStorage browser
+                    localStorage.setItem('fasihUser', JSON.stringify({
+                        id: data.user.id,
+                        nama_lengkap: data.user.nama_lengkap,
+                        email: data.user.email,
+                        kelas: data.user.kelas
+                    }));
+
+                    // Alihkan ke Dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Tampilkan pesan error jika ditolak (Email salah/Password salah)
+                    alert('Gagal Masuk: ' + data.message);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error detail:', error);
+                alert('Gagal menghubungi server. Pastikan server lokal berjalan!');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Fitur tambahan: Toggle Password Visibility
+        const togglePassword = document.querySelector('.password-toggle');
+        const passwordInput = document.querySelector('#password');
+        
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+    </script>
+</body>
+
+</html>

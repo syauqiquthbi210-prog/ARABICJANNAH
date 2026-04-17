@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - Fasih MA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="auth-page">
+
+    <div class="auth-back">
+        <a href="index.html" class="btn btn-outline back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke
+            Beranda</a>
+    </div>
+
+    <main class="auth-wrapper container">
+        <div class="auth-card">
+
+            <div class="auth-header">
+                <div class="logo auth-logo">
+                    <span class="logo-text">Fasih <span class="logo-accent">MA</span></span>
+                </div>
+                <h1 class="auth-title">Daftar Akun Fasih MA</h1>
+                <p class="auth-subtitle">Langkah pertama menuju kelancaran berbahasa Arab.</p>
+            </div>
+
+            <form id="registerForm" class="auth-form">
+
+                <div class="form-group">
+                    <label for="fullname">Nama Lengkap</label>
+                    <input type="text" id="fullname" name="fullname" placeholder="Masukkan nama lengkapmu" required>
+                    <span class="form-hint"><i class="fa-solid fa-circle-info"></i> Nama ini akan dipakai untuk
+                        sertifikat kelulusan level.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="kelas">Tingkatan Kelas</label>
+                    <div class="select-wrapper">
+                        <select id="kelas" name="kelas" required>
+                            <option value="" disabled selected>Pilih Kelas</option>
+                            <option value="X">Kelas X</option>
+                            <option value="XI">Kelas XI</option>
+                            <option value="XII">Kelas XII</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Kata Sandi</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Buat kata sandi yang kuat"
+                            required>
+                        <i class="fa-regular fa-eye password-toggle"></i>
+                    </div>
+                </div>
+
+                <hr class="auth-divider">
+
+                <div class="auth-feature-box">
+                    <div class="feature-box-header">
+                        <i class="fa-solid fa-bell feature-box-icon"></i>
+                        <h4>Pengingat Belajar Harian</h4>
+                    </div>
+                    <p class="feature-box-desc">Berapa lama target belajarmu dalam sehari? Kami akan mengirimkan
+                        pengingat jika kamu belum login hari ini.</p>
+
+                    <div class="form-group">
+                        <label for="target">Target Belajar Harian</label>
+                        <div class="select-wrapper">
+                            <select id="target" name="target">
+                                <option value="10">10 Menit / Hari (Santai)</option>
+                                <option value="20" selected>20 Menit / Hari (Fokus)</option>
+                                <option value="30">30 Menit / Hari (Intensif)</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down select-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large auth-submit">
+                    Mulai Petualangan Belajar <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Sudah punya akun? <a href="login.html" class="auth-link">Masuk di sini</a></p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.querySelector('.auth-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sedang mendaftar...';
+            submitBtn.disabled = true;
+
+            const userData = {
+                nama_lengkap: document.getElementById('fullname').value,
+                email: document.getElementById('email').value.trim().toLowerCase(),
+                password: document.getElementById('password').value,
+                kelas: document.getElementById('kelas').value,
+                target_menit: parseInt(document.getElementById('target').value)
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // PERBAIKAN: Simpan data user agar dashboard bisa mengenali namamu
+                    localStorage.setItem('fasihUser', JSON.stringify({
+                        id: data.user.id,
+                        nama_lengkap: data.user.nama_lengkap,
+                        email: data.user.email,
+                        kelas: data.user.kelas
+                    }));
+
+                    alert('Alhamdulillah! Pendaftaran Berhasil.');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Gagal Pendaftaran: ' + data.message);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error detail:', error);
+                alert('Gagal menghubungi server. Pastikan node server.js sedang jalan!');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

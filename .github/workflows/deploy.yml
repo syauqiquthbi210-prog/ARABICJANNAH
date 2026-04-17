@@ -1,0 +1,44 @@
+name: Deploy Node.js to cPanel
+
+on:
+  push:
+    branches:
+      - main
+      - master # bisa disesuaikan dengan branch utama Anda
+
+jobs:
+  deploy:
+    name: FTP Deploy to cPanel
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Penting untuk melakukan sinkronisasi file FTP
+
+    - name: Setup Node.js (Opsional, jika ada proses build)
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' 
+
+    # (Opsional) Jika Anda menggunakan TypeScript atau tools bundler:
+    # - name: Install Dependencies & Build
+    #   run: |
+    #     npm install
+    #     npm run build
+
+    - name: Sync files via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        # Menentukan apa saja yang tidak perlu diupload ke server untuk menghemat waktu
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          .github/**
+          README.md
+          .vscode/**

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran - Fasih MA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0F766E;
+            --primary-dark: #115E59;
+            --primary-light: #CCFBF1;
+            --primary-glow: rgba(20, 184, 166, 0.15);
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --dark-card: #1E293B;
+            --gray: #64748B;
+            --light: #F1F5F9;
+            --white: #FFFFFF;
+            --danger: #EF4444;
+            --success: #10B981;
+            --border: #E2E8F0;
+            --font-arabic: 'Scheherazade New', 'Amiri', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body {
+            background-color: var(--light);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%230F766E' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Header - Dark Premium */
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .back-btn {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        .back-btn:hover { color: white; }
+        .level-title { font-weight: 700; color: #14B8A6; font-size: 1.1rem; }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background: var(--dark);
+            height: 5px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, #14B8A6 100%);
+            width: 33.33%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        /* Container */
+        .main-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Stage Nav Pills */
+        .stage-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .stage-pill {
+            padding: 0.6rem 1.5rem;
+            border-radius: 14px;
+            background: var(--white);
+            color: var(--gray);
+            font-weight: 600;
+            font-size: 0.88rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .stage-pill.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(15,118,110,0.25);
+        }
+
+        /* ============================
+           STAGE 1: FLASHCARD
+           ============================ */
+        .stage-container { display: none; animation: fadeIn 0.4s ease forwards; }
+        .stage-container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .flashcard-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .scene { width: 100%; max-width: 420px; height: 280px; perspective: 1000px; }
+        .card {
+            width: 100%; height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card__face {
+            position: absolute;
+            width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+        }
+        .card__face--front {
+            background: var(--white);
+            color: var(--primary-dark);
+            border: 2px solid var(--border);
+            box-shadow: 0 10px 30px rgba(15,118,110,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .card__face--front::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-glow);
+        }
+        .card__face--front .arab-text {
+            font-family: var(--font-arabic);
+            font-size: 3.2rem;
+            line-height: 1.4;
+            position: relative;
+            text-shadow: 0 2px 10px rgba(15,118,110,0.1);
+        }
+        .card__face--back {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            transform: rotateY(180deg);
+            box-shadow: 0 10px 30px rgba(15,118,110,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .card__face--back::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M20 20c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .card__face--back .latin-text { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.5rem; opacity: 0.8; position: relative; }
+        .card__face--back .arti-text { font-size: 1.6rem; font-weight: 700; position: relative; }
+        .flip-hint { font-size: 0.8rem; color: var(--gray); margin-top: 1.2rem; position: relative; }
+
+        .controls { display: flex; gap: 1rem; align-items: center; }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-outline { background: var(--white); color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary-light); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--white); box-shadow: 0 4px 12px rgba(15,118,110,0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(15,118,110,0.3); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ============================
+           STAGE 2: HIWAR CHAT
+           ============================ */
+        .chat-container {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            height: 520px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-header::before {
+            content: '💬';
+            font-size: 1.2rem;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1.2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: #F8FAFC;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23CBD5E1' fill-opacity='0.15'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .bubble {
+            max-width: 80%;
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+        
+        .bubble.char-A {
+            background: var(--white);
+            color: var(--dark);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+        }
+        .bubble.char-B {
+            background: linear-gradient(135deg, #DCFCE7, #D1FAE5);
+            color: var(--dark);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.08);
+        }
+        .bubble .arab { font-family: var(--font-arabic); font-size: 1.8rem; text-align: right; margin-bottom: 0.5rem; color: #000; line-height: 1.6; }
+        .bubble .arti { font-size: 0.85rem; color: var(--gray); font-weight: 500; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 0.5rem; }
+        
+        .chat-action {
+            padding: 1rem;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ============================
+           STAGE 3: BOSS FIGHT (KUIS)
+           ============================ */
+        .quiz-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--danger), var(--accent));
+        }
+        .quiz-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px dashed var(--border);
+        }
+        .boss-icon { color: var(--danger); font-size: 2rem; }
+        .question-text {
+            font-size: 1.15rem; font-weight: 600; margin-bottom: 1.5rem; line-height: 1.6;
+            padding: 1rem; background: rgba(15,118,110,0.03); border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .options-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .option-label {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-weight: 500;
+            background: var(--white);
+        }
+        .option-label:hover { border-color: var(--primary); background: rgba(15,118,110,0.03); transform: translateX(4px); }
+        .option-label input[type="radio"] {
+            appearance: none;
+            width: 22px; height: 22px;
+            border: 2px solid var(--gray);
+            border-radius: 50%;
+            display: grid; place-content: center;
+            flex-shrink: 0;
+        }
+        .option-label input[type="radio"]::before {
+            content:(""); width: 10px; height: 10px; border-radius: 50%;
+            transform: scale(0); transition: 120ms transform ease-in-out;
+            background-color: var(--primary);
+        }
+        .option-label input[type="radio"]:checked { border-color: var(--primary); }
+        .option-label input[type="radio"]:checked::before { transform: scale(1); }
+        .option-label:has(input:checked) { border-color: var(--primary); background: var(--primary-light); }
+
+        .quiz-action { margin-top: 2rem; display: flex; justify-content: flex-end; }
+
+        /* Hasil */
+        .result-box {
+            text-align: center; padding: 2.5rem;
+            background: var(--white); border-radius: 20px;
+            margin-top: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+        }
+        .result-box h2 { margin: 1rem 0; font-size: 1.5rem; }
+        .result-box i { font-size: 4rem; }
+        .result-success i { color: var(--success); }
+        .result-success h2 { color: var(--success); }
+        .result-fail i { color: var(--danger); }
+        .result-fail h2 { color: var(--danger); }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .stage-nav { flex-wrap: wrap; }
+            .stage-pill { font-size: 0.8rem; padding: 0.5rem 1rem; }
+            .scene { height: 240px; }
+            .card__face--front .arab-text { font-size: 2.5rem; }
+            .controls { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+        <div class="level-title" id="topLevelTitle">Memuat Level...</div>
+    </header>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="topProgress"></div>
+    </div>
+
+    <main class="main-content">
+        
+        <!-- Navigation Pills -->
+        <div class="stage-nav">
+            <div class="stage-pill active" id="pill-1"><i class="fa-solid fa-layer-group"></i> 1. Mufrodat</div>
+            <div class="stage-pill" id="pill-2"><i class="fa-solid fa-comments"></i> 2. Hiwar</div>
+            <div class="stage-pill" id="pill-3"><i class="fa-solid fa-skull"></i> 3. Boss Fight</div>
+        </div>
+
+        <!-- =======================
+             STAGE 1: MUFRODAT 
+             ======================= -->
+        <section class="stage-container active" id="stage1">
+            <div class="flashcard-area">
+                <div class="scene">
+                    <div class="card" id="flashcard">
+                        <div class="card__face card__face--front">
+                            <span class="arab-text" id="fcArab">...</span>
+                            <div class="flip-hint"><i class="fa-solid fa-rotate"></i> Klik untuk melihat arti</div>
+                        </div>
+                        <div class="card__face card__face--back">
+                            <span class="latin-text" id="fcLatin">...</span>
+                            <span class="arti-text" id="fcArti">...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-outline" id="btnPrevFc" disabled><i class="fa-solid fa-chevron-left"></i> Sebelumnya</button>
+                    <span id="fcCounter" style="font-weight:bold; color:var(--gray);">1 / X</span>
+                    <button class="btn btn-outline" id="btnNextFc">Selanjutnya <i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <button class="btn btn-primary" id="btnFinishStage1" style="display:none; margin-top:1rem;">Masuk ke Tahap 2: Hiwar <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </section>
+
+        <!-- =======================
+             STAGE 2: HIWAR 
+             ======================= -->
+        <section class="stage-container" id="stage2">
+            <div class="chat-container">
+                <div class="chat-header">Simulasi Percakapan</div>
+                <div class="chat-messages" id="chatArea">
+                    <!-- Bubbles will be injected here -->
+                </div>
+                <div class="chat-action">
+                    <button class="btn btn-primary" id="btnNextChat" style="width:100%;">Tampilkan Pesan Selanjutnya <i class="fa-solid fa-forward-step"></i></button>
+                    <button class="btn btn-success" id="btnFinishStage2" style="display:none; width:100%; background:var(--accent); color:white; border:none;">Masuk ke Tahap 3: Ujian (Boss Fight) <i class="fa-solid fa-khanda"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================
+             STAGE 3: UJIAN (BOSS FIGHT)
+             ======================= -->
+        <section class="stage-container" id="stage3">
+            <div class="quiz-card" id="quizArea">
+                <div class="quiz-header">
+                    <h3>Ujian Akhir Level <span id="quizCounter">1 / 5</span></h3>
+                    <i class="fa-solid fa-skull boss-icon"></i>
+                </div>
+                <div class="question-text" id="qText">Memuat pertanyaan...</div>
+                <div class="options-list" id="qOptions">
+                    <!-- Radio inputs -->
+                </div>
+                <div class="quiz-action">
+                    <button class="btn btn-primary" id="btnJawab">Jawab <i class="fa-solid fa-check"></i></button>
+                </div>
+            </div>
+
+            <!-- Result Box (Hidden by default) -->
+            <div class="result-box" id="resultArea" style="display:none;">
+                <!-- Content injected via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Check Session
+        const localSession = localStorage.getItem('fasihUser');
+        if (!localSession) {
+            window.location.href = 'login.html';
+        }
+        const currentUser = JSON.parse(localSession);
+
+        // Get Level ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const levelId = urlParams.get('level') || 1; // Default level 1
+
+        document.getElementById('topLevelTitle').innerText = `Level ${levelId}`;
+
+        // Global State Data
+        let mufrodatData = [];
+        let hiwarData = [];
+        let ujianData = [];
+        let userAnswers = [];
+
+        // Counters
+        let currFcIndex = 0;
+        let currHiwarIndex = 0;
+        let currQuizIndex = 0;
+        let score = 0;
+
+        // UI Elements
+        const stage1 = document.getElementById('stage1');
+        const stage2 = document.getElementById('stage2');
+        const stage3 = document.getElementById('stage3');
+        const pill1 = document.getElementById('pill-1');
+        const pill2 = document.getElementById('pill-2');
+        const pill3 = document.getElementById('pill-3');
+        const bar = document.getElementById('topProgress');
+
+        // ==== INIT FETCH DATA ====
+        async function fetchLevelData() {
+            try {
+                const [resM, resH, resU] = await Promise.all([
+                    fetch(`/api/pembelajaran/mufrodat/${levelId}`).then(r => r.json()),
+                    fetch(`/api/pembelajaran/hiwar/${levelId}`).then(r => r.json()),
+                    fetch(`/api/pembelajaran/ujian/${levelId}`).then(r => r.json())
+                ]);
+
+                if(resM.success) mufrodatData = resM.data;
+                if(resH.success) hiwarData = resH.data;
+                if(resU.success) ujianData = resU.data;
+
+                initStage1();
+            } catch (e) {
+                console.error("Gagal menarik data level", e);
+                alert("Terjadi kesalahan koneksi saat memuat materi.");
+            }
+        }
+
+        // ==========================
+        // TAHAP 1: MUFRODAT
+        // ==========================
+        const flashcard = document.getElementById('flashcard');
+        const fcArab = document.getElementById('fcArab');
+        const fcLatin = document.getElementById('fcLatin');
+        const fcArti = document.getElementById('fcArti');
+        const btnPrevFc = document.getElementById('btnPrevFc');
+        const btnNextFc = document.getElementById('btnNextFc');
+        const fcCounter = document.getElementById('fcCounter');
+        const btnFinishStage1 = document.getElementById('btnFinishStage1');
+
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('is-flipped');
+        });
+
+        function initStage1() {
+            if(mufrodatData.length === 0) return;
+            currFcIndex = 0;
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            flashcard.classList.remove('is-flipped');
+            const data = mufrodatData[currFcIndex];
+            
+            setTimeout(() => {
+                fcArab.innerText = data.arab;
+                fcLatin.innerText = data.latin;
+                fcArti.innerText = data.arti;
+                fcCounter.innerText = `${currFcIndex + 1} / ${mufrodatData.length}`;
+            }, 150); // delay to prevent seeing text change during flip
+
+            btnPrevFc.disabled = currFcIndex === 0;
+            
+            if(currFcIndex === mufrodatData.length - 1) {
+                btnNextFc.style.display = 'none';
+                btnFinishStage1.style.display = 'flex';
+            } else {
+                btnNextFc.style.display = 'flex';
+                btnFinishStage1.style.display = 'none';
+            }
+        }
+
+        btnPrevFc.addEventListener('click', () => { if(currFcIndex > 0) { currFcIndex--; renderFlashcard(); } });
+        btnNextFc.addEventListener('click', () => { if(currFcIndex < mufrodatData.length - 1) { currFcIndex++; renderFlashcard(); } });
+
+        btnFinishStage1.addEventListener('click', () => {
+            // Goto stage 2
+            stage1.classList.remove('active');
+            stage2.classList.add('active');
+            pill1.classList.remove('active');
+            pill2.classList.add('active');
+            bar.style.width = '66.66%';
+            initStage2();
+        });
+
+
+        // ==========================
+        // TAHAP 2: HIWAR
+        // ==========================
+        const chatArea = document.getElementById('chatArea');
+        const btnNextChat = document.getElementById('btnNextChat');
+        const btnFinishStage2 = document.getElementById('btnFinishStage2');
+
+        function initStage2() {
+            chatArea.innerHTML = '';
+            currHiwarIndex = 0;
+        }
+
+        btnNextChat.addEventListener('click', () => {
+            if (currHiwarIndex < hiwarData.length) {
+                const data = hiwarData[currHiwarIndex];
+                
+                const bubble = document.createElement('div');
+                bubble.className = `bubble char-${data.karakter}`;
+                bubble.innerHTML = `
+                    <div class="arab" dir="rtl">${data.arab}</div>
+                    <div class="arti"><strong>${data.latin}</strong><br>${data.arti}</div>
+                `;
+                chatArea.appendChild(bubble);
+                
+                // Scroll to bottom
+                chatArea.scrollTop = chatArea.scrollHeight;
+
+                currHiwarIndex++;
+
+                if (currHiwarIndex === hiwarData.length) {
+                    btnNextChat.style.display = 'none';
+                    btnFinishStage2.style.display = 'block';
+                }
+            }
+        });
+
+        btnFinishStage2.addEventListener('click', () => {
+            // Goto stage 3
+            stage2.classList.remove('active');
+            stage3.classList.add('active');
+            pill2.classList.remove('active');
+            pill3.classList.add('active');
+            bar.style.width = '100%';
+            initStage3();
+        });
+
+
+        // ==========================
+        // TAHAP 3: UJIAN (Boss Fight)
+        // ==========================
+        const quizArea = document.getElementById('quizArea');
+        const resultArea = document.getElementById('resultArea');
+        const qText = document.getElementById('qText');
+        const qOptions = document.getElementById('qOptions');
+        const btnJawab = document.getElementById('btnJawab');
+        const quizCounter = document.getElementById('quizCounter');
+
+        function initStage3() {
+            currQuizIndex = 0;
+            score = 0;
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = ujianData[currQuizIndex];
+            quizCounter.innerText = `${currQuizIndex + 1} / ${ujianData.length}`;
+            qText.innerText = q.pertanyaan;
+
+            qOptions.innerHTML = '';
+            const opts = [
+                { val: 'a', text: q.opsi_a },
+                { val: 'b', text: q.opsi_b },
+                { val: 'c', text: q.opsi_c },
+                { val: 'd', text: q.opsi_d }
+            ];
+
+            opts.forEach(o => {
+                if(o.text) {
+                    const id = `opt_${o.val}`;
+                    qOptions.innerHTML += `
+                        <label class="option-label" for="${id}">
+                            <input type="radio" name="kuis_opsi" id="${id}" value="${o.val}">
+                            <span>${o.text}</span>
+                        </label>
+                    `;
+                }
+            });
+        }
+
+        btnJawab.addEventListener('click', () => {
+            const selected = document.querySelector('input[name="kuis_opsi"]:checked');
+            if(!selected) {
+                alert("Pilih jawaban terlebih dahulu!");
+                return;
+            }
+
+            const q = ujianData[currQuizIndex];
+            if(selected.value === q.jawaban_benar) {
+                score++;
+            }
+
+            currQuizIndex++;
+            if(currQuizIndex < ujianData.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        });
+
+        async function finishQuiz() {
+            quizArea.style.display = 'none';
+            resultArea.style.display = 'block';
+            
+            const total = ujianData.length;
+            const percentage = (score / total) * 100;
+            
+            if (percentage >= 90) {
+                // Lulus!
+                resultArea.className = 'result-box result-success';
+                resultArea.innerHTML = `
+                    <i class="fa-solid fa-crown"></i>
+                    <h2>Selamat! Anda Lulus!</h2>
+                    <p>Skor Anda: <strong>${score} dari ${total} (${percentage.toFixed(0)}%)</strong></p>
+                    <button class="btn btn-primary" onclick="claimReward()" style="margin: 1.5rem auto 0; display:block;">Klaim Poin <i class="fa-solid fa-arrow-right"></i></button>
+                    <div id="loadingClaim" style="display:none; margin-top:1rem; color:var(--gray);">Memperbarui profil Anda...</div>
+                `;
+            } else {
+                // Gagal
+                resultArea.className = 'result-box result-fail';
+                resultArea.innerHTML = `
+                    <i class="fa-solid fa-heart-crack"></i>
+                    <h2>Yah, Jangan Menyerah!</h2>
+                    <p>Skor Anda: <strong>${score} dari ${total} (${percentage.toFixed(0)}%)</strong></p>
+                    <p style="color:var(--gray); font-size:0.9rem;">Anda belum mencapai batas minimal kelulusan 90% (Min. 18 Soal Benar).</p>
+                    <button class="btn btn-outline" onclick="location.reload()" style="margin: 1.5rem auto 0; display:block;"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button>
+                `;
+            }
+        }
+
+        async function claimReward() {
+            const btn = document.querySelector('.result-box .btn-primary');
+            const loading = document.getElementById('loadingClaim');
+            btn.style.display = 'none';
+            loading.style.display = 'block';
+            loading.innerText = 'Memperbarui profil Anda...';
+
+            try {
+                const response = await fetch(`/api/pembelajaran/lulus/${levelId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ userId: currentUser.id })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update sesi lokal dengan data terbaru (termasuk level_aktif baru)
+                    localStorage.setItem('fasihUser', JSON.stringify(data.user));
+                    
+                    loading.innerHTML = '<i class="fa-solid fa-check-circle" style="color:var(--success);"></i> Alhamdulillah! Level terbuka & poin bertambah!';
+                    loading.style.color = 'var(--success)';
+                    loading.style.fontWeight = '600';
+                    
+                    // Redirect ke dashboard setelah 2 detik
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    // Server merespon tapi gagal
+                    loading.innerHTML = '<i class="fa-solid fa-exclamation-triangle" style="color:var(--danger);"></i> ' + (data.message || 'Gagal menyimpan kelulusan.');
+                    loading.style.color = 'var(--danger)';
+                    btn.style.display = 'block';
+                    btn.innerText = 'Coba Lagi';
+                }
+            } catch(e) {
+                console.error('Error saat klaim reward:', e);
+                loading.innerHTML = '<i class="fa-solid fa-wifi" style="color:var(--danger);"></i> Kesalahan koneksi. Silakan coba lagi.';
+                loading.style.color = 'var(--danger)';
+                btn.style.display = 'block';
+                btn.innerText = 'Coba Lagi';
+            }
+        }
+
+        // Jalankan fetch saat load
+        fetchLevelData();
+    </script>
+</body>
+</html>

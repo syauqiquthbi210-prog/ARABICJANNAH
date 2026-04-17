@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Obrolan Arab - Fasih MA</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/chat.css">
+
+    <style>
+        /* ===== TOAST NOTIFICATION ===== */
+        #toastContainer {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast-notif {
+            background: linear-gradient(135deg, #0f766e, #0d9488);
+            color: #fff;
+            padding: 14px 18px;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            max-width: 300px;
+            pointer-events: all;
+            animation: slideInToast 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            border-left: 4px solid #fbbf24;
+        }
+        .toast-notif.removing {
+            animation: slideOutToast 0.3s ease forwards;
+        }
+        .toast-notif .toast-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast-notif .toast-title i { color: #fbbf24; }
+        .toast-notif .toast-body { opacity: 0.9; margin-bottom: 10px; }
+        .toast-notif .toast-action {
+            display: flex;
+            gap: 8px;
+        }
+        .toast-notif .btn-toast-follow {
+            background: #fbbf24;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: opacity 0.2s;
+        }
+        .toast-notif .btn-toast-follow:hover { opacity: 0.85; }
+        .toast-notif .btn-toast-dismiss {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: opacity 0.2s;
+        }
+        .toast-notif .btn-toast-dismiss:hover { opacity: 0.7; }
+        @keyframes slideInToast {
+            from { opacity: 0; transform: translateX(120%); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideOutToast {
+            from { opacity: 1; transform: translateX(0); }
+            to   { opacity: 0; transform: translateX(120%); }
+        }
+
+        /* ===== FOLLOW STATUS STATES ===== */
+        .btn-waiting-follow {
+            background: rgba(255,255,255,0.1) !important;
+            color: #94a3b8 !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            cursor: not-allowed !important;
+        }
+        .mutual-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* ===== VIP KEYBOARD TOGGLE ===== */
+        .kb-mode-toggle {
+            display: none; /* Hidden by default, shown for VIP */
+            align-items: center;
+            gap: 0;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .kb-mode-toggle.vip-visible {
+            display: flex;
+        }
+        .kb-mode-btn {
+            border: none;
+            padding: 8px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .kb-mode-btn.mode-arab {
+            background: rgba(20,184,166,0.15);
+            color: #14B8A6;
+        }
+        .kb-mode-btn.mode-indo {
+            background: transparent;
+            color: #64748B;
+        }
+        .kb-mode-btn.active {
+            background: linear-gradient(135deg, #0d9488, #0f766e) !important;
+            color: #fff !important;
+        }
+
+        /* VIP Badge in header */
+        .vip-badge-header {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(255,215,0,0.1));
+            border: 1px solid rgba(245,158,11,0.25);
+            color: #F59E0B;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .vip-badge-header.show { display: inline-flex; }
+
+        /* ===== INDONESIAN VIRTUAL KEYBOARD ===== */
+        .virtual-keyboard-indo {
+            background: linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%);
+            border-top: 2px solid #059669;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+        .virtual-keyboard-indo.show {
+            display: flex;
+        }
+        .virtual-keyboard-indo .keyboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px 8px;
+            border-bottom: 1px solid rgba(5,150,105,0.15);
+            margin-bottom: 4px;
+        }
+        .virtual-keyboard-indo .kb-preview-text {
+            font-size: 0.88rem;
+            color: #047857;
+            font-weight: 600;
+            direction: ltr;
+            text-align: left;
+        }
+        .virtual-keyboard-indo .kb-preview-text.typing {
+            font-size: 1.1rem;
+            color: #0F172A;
+        }
+        .virtual-keyboard-indo .kb-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }
+        .virtual-keyboard-indo .kb-key {
+            flex: 1;
+            max-width: 44px;
+            height: 44px;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            background: #FFFFFF;
+            color: #0F172A;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.12s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .virtual-keyboard-indo .kb-key:active,
+        .virtual-keyboard-indo .kb-key.pressed {
+            background: #059669;
+            color: #fff;
+            border-color: #059669;
+            transform: scale(0.95);
+        }
+        .virtual-keyboard-indo .kb-key:hover {
+            background: #ECFDF5;
+            border-color: #059669;
+        }
+        .virtual-keyboard-indo .kb-space {
+            flex: 5;
+            max-width: 240px;
+            font-size: 0.82rem;
+            color: #64748B;
+        }
+        .virtual-keyboard-indo .kb-action {
+            flex: 1.5;
+            max-width: 56px;
+            background: #E2E8F0;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+        .virtual-keyboard-indo .kb-send {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff;
+            border-color: #059669;
+            max-width: 80px;
+            flex: 2;
+            font-size: 0.82rem;
+            gap: 4px;
+        }
+        .virtual-keyboard-indo .kb-send:hover {
+            opacity: 0.9;
+        }
+        .virtual-keyboard-indo .kb-shift {
+            flex: 1.5;
+            max-width: 56px;
+            background: #E2E8F0;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+        .virtual-keyboard-indo .kb-shift.active {
+            background: #059669;
+            color: #fff;
+            border-color: #059669;
+        }
+        .virtual-keyboard-indo .btn-close-kb {
+            background: none;
+            border: none;
+            color: #64748B;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 8px;
+        }
+    </style>
+</head>
+<body class="chat-app">
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Sidebar (Kiri) - Daftar Akun -->
+    <aside class="chat-sidebar" id="chatSidebar">
+        <div class="sidebar-header">
+            <h2>Akun &amp; Teman</h2>
+            <a href="dashboard.html" class="btn-icon header-home-btn" title="Kembali ke Beranda"><i class="fa-solid fa-home"></i></a>
+        </div>
+        
+        <!-- SIDEBAR PENCARIAN & FILTER -->
+        <div class="sidebar-search">
+            <div class="search-box">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="userSearchInput" placeholder="Cari teman dari kelas lain...">
+            </div>
+            <div class="sidebar-tabs" id="userFilterTabs">
+                <button class="tab-btn active" data-filter="all">Semua</button>
+                <button class="tab-btn" data-filter="mutual">Teman Saya</button>
+                <button class="tab-btn" data-filter="menunggu">Menunggu</button>
+            </div>
+        </div>
+
+        <div class="account-list" id="accountList">
+            <div style="padding: 20px; text-align: center; color: #94A3B8; font-size: 0.9rem;">
+                <i class="fa-solid fa-circle-notch fa-spin"></i><br>Memuat pengguna...
+            </div>
+        </div>
+    </aside>
+
+    <!-- Area Obrolan Utama (Kanan) -->
+    <main class="chat-main">
+        
+        <!-- Default State (belum pilih siapapun) -->
+        <div id="defaultView" class="main-view">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#64748b; text-align:center; gap:12px; padding:20px;">
+                <i class="fa-solid fa-comments" style="font-size:3rem; opacity:0.3;"></i>
+                <p style="font-size:0.95rem;">Pilih pengguna dari sidebar untuk melihat profil atau memulai obrolan.</p>
+            </div>
+        </div>
+
+        <!-- STATE A: PROFILE VIEW (Belum Follow / Menunggu) -->
+        <div id="profileView" class="main-view hidden">
+            <button class="btn-icon back-btn-mobile profile-back-btn" id="backToSidebarProfile">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="profile-card-large">
+                <div class="profile-avatar-large">
+                    <img id="pvAvatar" src="" alt="Avatar">
+                </div>
+                <h2 id="pvName" class="profile-name-large">-</h2>
+                <span id="pvClass" class="profile-class-large">-</span>
+                <p id="pvBio" class="profile-bio-large">Siswa Fasih MA</p>
+                
+                <div class="profile-action" id="profileActionArea">
+                    <button id="btnFollow" class="btn btn-primary btn-large follow-btn">
+                        <i class="fa-solid fa-user-plus"></i> Ikuti (Follow)
+                    </button>
+                    <p class="follow-warning">Kalian harus saling mengikuti (mutual) untuk dapat membuka ruang obrolan bahasa Arab.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATE B: CHAT VIEW (Mutual) -->
+        <div id="chatView" class="main-view hidden">
+            <!-- 1. HEADER OBROLAN -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <button class="btn-icon back-btn-mobile" id="backToSidebar">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div class="chat-avatar">
+                        <img id="chatAvatarImg" src="" alt="Avatar">
+                    </div>
+                    <div class="chat-user-info">
+                        <h3 class="chat-name" id="chatName">-</h3>
+                        <p class="chat-status">
+                            <span class="status-dot"></span> Online
+                            <span id="vipBadgeHeader" class="vip-badge-header">🛡️ VIP</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-icon" id="optionsBtn" title="Opsi Obrolan"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                    <!-- Floating Dropdown Menu -->
+                    <div class="chat-options-menu" id="optionsMenu">
+                        <button onclick="bukaModalHapus()"><i class="fa-solid fa-trash-can"></i> Hapus Chat</button>
+                        <button onclick="alert('Fitur segera hadir!')"><i class="fa-solid fa-ban"></i> Blokir</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 2. AREA OBROLAN -->
+            <div class="chat-content" id="chatContent" dir="rtl">
+                <!-- Bubble dirender via JS -->
+            </div>
+
+            <!-- 3. AREA INPUT TEKS -->
+            <div class="chat-input-area" dir="rtl">
+                <!-- VIP Keyboard Mode Toggle -->
+                <div class="kb-mode-toggle" id="kbModeToggle">
+                    <button class="kb-mode-btn mode-arab active" id="btnModeArab" title="Keyboard Arab">
+                        <i class="fa-solid fa-moon"></i> عربي
+                    </button>
+                    <button class="kb-mode-btn mode-indo" id="btnModeIndo" title="Keyboard Indonesia">
+                        <i class="fa-solid fa-flag"></i> Indo
+                    </button>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="arabicInput" class="arabic-input" placeholder="اكتب رسالتك هنا..." dir="rtl" autocomplete="off" inputmode="none">
+                    <div id="latinWarning" class="latin-warning"><i class="fa-solid fa-triangle-exclamation"></i> Gunakan Keyboard Layar!</div>
+                </div>
+                <button class="btn-send" id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+
+            <!-- 4. KEYBOARD VIRTUAL ARAB -->
+            <div class="virtual-keyboard" id="arabicKeyboard" dir="rtl">
+                <div class="keyboard-header">
+                    <span id="kbPreview" class="kb-preview-text">لوحة المفاتيح العربية (Keyboard Virtual)</span>
+                    <button class="btn-close-kb" id="closeKbBtn"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+                <div class="keyboard-keys" id="keyboardContainer">
+                    <!-- Tombol-tombol akan di-generate via JS -->
+                </div>
+            </div>
+
+            <!-- 5. KEYBOARD VIRTUAL INDONESIA (VIP ONLY) -->
+            <div class="virtual-keyboard-indo" id="indoKeyboard">
+                <div class="keyboard-header">
+                    <span id="kbPreviewIndo" class="kb-preview-text">🛡️ Keyboard Indonesia (Mode VIP)</span>
+                    <button class="btn-close-kb" id="closeKbIndoBtn"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+                <div id="indoKeyboardContainer">
+                    <!-- Tombol-tombol akan di-generate via JS -->
+                </div>
+            </div>
+        </div> <!-- End of chatView -->
+    </main>
+
+    <!-- MODAL KONFIRMASI HAPUS CHAT (PREMIUM UI) -->
+    <div class="confirm-modal-overlay" id="confirmModal">
+        <div class="confirm-modal-card">
+            <div class="modal-icon">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h3>Hapus Riwayat Chat?</h3>
+            <p>Tindakan ini akan menghapus seluruh pesan antara kamu dan <strong><span id="targetChatName">-</span></strong> secara permanen. Saling menjaga privasi ya!</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="tutupModalHapus()">Batal</button>
+                <button class="btn-confirm-delete" id="btnEksekusiHapus">Ya, Hapus Semua</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // ==========================================
+        // INISIASI & IDENTITAS
+        // ==========================================
+        let currentUser = null;
+        try {
+            currentUser = JSON.parse(localStorage.getItem('fasihUser'));
+        } catch(e) { currentUser = null; }
+
+        if (!currentUser || (!currentUser.id && !currentUser.email)) {
+            window.location.href = 'login.html';
+        }
+
+        const socket = io(); // Auto-detect origin
+
+        // --- SESSION RECOVERY & DATA REFRESH ---
+        (async function fixSession() {
+            if (currentUser && !currentUser.id && currentUser.email) {
+                try {
+                    const res = await fetch(`/api/user/email/${encodeURIComponent(currentUser.email)}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        currentUser.id = data.user.id;
+                        localStorage.setItem('fasihUser', JSON.stringify(currentUser));
+                        // Beritahu server siapa kita setelah ID dipulihkan
+                        socket.emit('user_online', currentUser.id);
+                        // Reload daftar user
+                        loadDatabaseUsers();
+                    } else {
+                        window.location.href = 'login.html';
+                    }
+                } catch(e) {
+                    console.error("Gagal pulihkan sesi:", e);
+                    window.location.href = 'login.html';
+                }
+            } else if (currentUser && currentUser.id) {
+                // Beritahu server siapa kita
+                socket.emit('user_online', currentUser.id);
+            }
+
+            // Fetch fresh user data (termasuk role) dari DB
+            if (currentUser && currentUser.id) {
+                try {
+                    const res = await fetch(`/api/user/${currentUser.id}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        // Update currentUser dengan data terbaru
+                        Object.assign(currentUser, data.user);
+                        localStorage.setItem('fasihUser', JSON.stringify(currentUser));
+                        console.log('[SESSION] Data user diperbarui:', currentUser);
+                        // Re-detect VIP setelah data ter-refresh
+                        detectVip();
+                    }
+                } catch(e) {
+                    console.warn("Gagal refresh user data:", e);
+                }
+            }
+        })();
+
+        // ==========================================
+        // STATE & ELEMEN UI
+        // ==========================================
+        let currentActiveItem = null;
+        let currentChatPartnerId = null;
+
+        const profileView = document.getElementById('profileView');
+        const chatView = document.getElementById('chatView');
+        const defaultView = document.getElementById('defaultView');
+        const btnFollow = document.getElementById('btnFollow');
+        const pvAvatar = document.getElementById('pvAvatar');
+        const pvName = document.getElementById('pvName');
+        const pvClass = document.getElementById('pvClass');
+        const pvBio = document.getElementById('pvBio');
+        const profileActionArea = document.getElementById('profileActionArea');
+        const chatName = document.getElementById('chatName');
+        const chatAvatarImg = document.getElementById('chatAvatarImg');
+        const chatContent = document.getElementById('chatContent');
+        const chatInput = document.getElementById('arabicInput');
+        const keyboard = document.getElementById('arabicKeyboard');
+        const closeKbBtn = document.getElementById('closeKbBtn');
+        const warning = document.getElementById('latinWarning');
+        const sendBtn = document.getElementById('sendBtn');
+        const kbPreview = document.getElementById('kbPreview');
+        const defaultTitle = "لوحة المفاتيح العربية (Keyboard Virtual)";
+
+        // ==========================================
+        // TOAST NOTIFICATION
+        // ==========================================
+        function showToast(notifData) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-notif';
+            toast.innerHTML = `
+                <div class="toast-title"><i class="fa-solid fa-bell"></i> Permintaan Follow!</div>
+                <div class="toast-body"><strong>${notifData.nama_pengirim}</strong> ingin mengikutimu.</div>
+                <div class="toast-action">
+                    <button class="btn-toast-follow" onclick="doFollback(${notifData.pengikut_id}, '${notifData.nama_pengirim}', this.closest('.toast-notif'))">
+                        <i class="fa-solid fa-user-check"></i> Follback
+                    </button>
+                    <button class="btn-toast-dismiss" onclick="dismissToast(this.closest('.toast-notif'))">
+                        Nanti
+                    </button>
+                </div>
+            `;
+            container.appendChild(toast);
+
+            // Auto dismiss setelah 15 detik
+            setTimeout(() => dismissToast(toast), 15000);
+        }
+
+        function dismissToast(toast) {
+            if (!toast || !toast.parentNode) return;
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+        }
+
+        async function doFollback(pengikutId, namaPengirim, toast) {
+            try {
+                const res = await fetch('/api/follow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pengikut_id: currentUser.id, diikuti_id: pengikutId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    dismissToast(toast);
+                    // Reload daftar user agar status terupdate
+                    loadDatabaseUsers();
+                }
+            } catch(e) {
+                console.error('Gagal follback:', e);
+            }
+        }
+
+        // ==========================================
+        // SOCKET.IO EVENTS
+        // ==========================================
+
+        // Terima notifikasi follow masuk
+        socket.on('notif_follow', (payload) => {
+            console.log('Notif follow diterima:', payload);
+            showToast(payload);
+        });
+
+        // Terima update status mutual (keduanya jadi mutual)
+        socket.on('status_mutual', (payload) => {
+            console.log('Status mutual:', payload);
+            // Reload daftar user agar sidebar terupdate otomatis
+            loadDatabaseUsers();
+        });
+
+        // Terima pesan baru
+        socket.on('pesan_baru', (payload) => {
+            // Hanya tampilkan jika sedang buka chat dengan pengirim tersebut
+            if (
+                (payload.pengirim_id == currentUser.id && payload.penerima_id == currentChatPartnerId) ||
+                (payload.pengirim_id == currentChatPartnerId && payload.penerima_id == currentUser.id)
+            ) {
+                const tipe = payload.pengirim_id == currentUser.id ? 'sent' : 'received';
+                const waktu = new Date(payload.waktu_kirim);
+                const timeStr = `${waktu.getHours().toString().padStart(2,'0')}:${waktu.getMinutes().toString().padStart(2,'0')}`;
+                renderBubble(payload.isi_pesan, timeStr, tipe);
+            }
+        });
+
+        // ==========================================
+        // LOAD DAFTAR PENGGUNA
+        // ==========================================
+        async function loadDatabaseUsers() {
+            const listContainer = document.getElementById('accountList');
+            listContainer.innerHTML = '<div style="padding:20px; text-align:center; color:#94A3B8; font-size:0.9rem;"><i class="fa-solid fa-circle-notch fa-spin"></i><br>Memuat...</div>';
+
+            try {
+                const res = await fetch(`/api/pengguna/${currentUser.id}`);
+                const data = await res.json();
+
+                if (data.success && data.pengguna.length > 0) {
+                    listContainer.innerHTML = '';
+                    data.pengguna.forEach(p => renderUserItem(p, listContainer));
+                    filterUsers(); // Terapkan filter aktif
+                } else {
+                    listContainer.innerHTML = '<div style="padding:20px; text-align:center; color:#94A3B8; font-size:0.9rem;">Belum ada pengguna lain yang terdaftar.</div>';
+                }
+            } catch(e) {
+                listContainer.innerHTML = '<div style="padding:20px; text-align:center; color:#e74c3c; font-size:0.9rem;"><i class="fa-solid fa-triangle-exclamation"></i><br>Gagal memuat. Cek koneksi server.</div>';
+                console.error('Gagal fetch pengguna:', e);
+            }
+        }
+
+        function renderUserItem(p, container) {
+            const isMutual = p.status_mutual === 'mutual';
+            const isPending = p.status_mutual === 'menunggu';
+            const isFollback = p.status_mutual === 'follback';
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.nama_lengkap)}&background=0F766E&color=fff`;
+
+            const div = document.createElement('div');
+            div.className = 'account-item';
+            div.dataset.id = p.id;
+            div.dataset.mutual = isMutual ? 'true' : 'false';
+            div.dataset.pending = isPending ? 'true' : 'false';
+            div.dataset.follback = isFollback ? 'true' : 'false';
+            div.dataset.name = p.nama_lengkap;
+            div.dataset.class = p.kelas;
+            div.dataset.avatar = avatarUrl;
+            div.dataset.filter = isMutual ? 'mutual' : (isPending ? 'menunggu' : (isFollback ? 'follback' : 'all'));
+
+            let statusBadge = '';
+            if (isMutual) {
+                statusBadge = '<span style="font-size:0.7rem; color:#10b981; font-weight:600; margin-left:4px;">• Teman</span>';
+            } else if (isPending) {
+                statusBadge = '<span style="font-size:0.7rem; color:#f59e0b; font-weight:600; margin-left:4px;">• Menunggu</span>';
+            } else if (isFollback) {
+                statusBadge = '<span style="font-size:0.7rem; color:#3b82f6; font-weight:600; margin-left:4px;">• Follback</span>';
+            }
+
+            div.innerHTML = `
+                <div class="account-avatar">
+                    <img src="${avatarUrl}" alt="${p.nama_lengkap}">
+                    <span class="status-indicator online"></span>
+                </div>
+                <div class="account-info">
+                    <h4>${p.nama_lengkap}${statusBadge}</h4>
+                    <span class="class-label">Kelas ${p.kelas}</span>
+                </div>
+            `;
+
+            div.addEventListener('click', () => {
+                document.querySelectorAll('.account-item').forEach(ai => ai.classList.remove('active'));
+                div.classList.add('active');
+                currentActiveItem = div;
+
+                if (isMutual) {
+                    openChatView(p);
+                } else {
+                    openProfileView(p, isPending, isFollback);
+                }
+
+                if (window.innerWidth <= 768) {
+                    document.body.classList.remove('show-sidebar-mobile');
+                }
+            });
+
+            container.appendChild(div);
+
+            // Jika ini adalah item yang sedang aktif, perbarui status visual
+            if (currentChatPartnerId == p.id && isMutual) {
+                div.click();
+            }
+        }
+
+        // ==========================================
+        // PROFILE VIEW (belum mutual)
+        // ==========================================
+        function openProfileView(p, isPending, isFollback) {
+            defaultView.classList.add('hidden');
+            chatView.classList.add('hidden');
+            profileView.classList.remove('hidden');
+
+            pvName.innerText = p.nama_lengkap;
+            pvClass.innerText = `Kelas ${p.kelas}`;
+            pvBio.innerText = `Siswa Kelas ${p.kelas} - Fasih MA`;
+            pvAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.nama_lengkap)}&background=0F766E&color=fff&size=128`;
+
+            if (isPending) {
+                profileActionArea.innerHTML = `
+                    <button class="btn btn-large btn-waiting-follow" disabled>
+                        <i class="fa-solid fa-clock"></i> Menunggu Follback...
+                    </button>
+                    <p class="follow-warning">Kamu sudah mengikuti ${p.nama_lengkap}. Tunggu mereka memfollow balik.</p>
+                `;
+            } else if (isFollback) {
+                profileActionArea.innerHTML = `
+                    <button id="btnFollow" class="btn btn-primary btn-large follow-btn">
+                        <i class="fa-solid fa-user-check"></i> Ikuti Balik (Follback)
+                    </button>
+                    <p class="follow-warning">${p.nama_lengkap} sudah mengikutimu. Klik untuk mulai berteman!</p>
+                `;
+                document.getElementById('btnFollow').addEventListener('click', () => doFollow(p));
+            } else {
+                profileActionArea.innerHTML = `
+                    <button id="btnFollow" class="btn btn-primary btn-large follow-btn">
+                        <i class="fa-solid fa-user-plus"></i> Ikuti (Follow)
+                    </button>
+                    <p class="follow-warning">Kalian harus saling mengikuti (mutual) untuk dapat membuka ruang obrolan bahasa Arab.</p>
+                `;
+                document.getElementById('btnFollow').addEventListener('click', () => doFollow(p));
+            }
+        }
+
+        async function doFollow(p) {
+            const btn = document.getElementById('btnFollow');
+            if (!btn) return;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/follow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pengikut_id: currentUser.id, diikuti_id: p.id })
+                });
+                const data = await res.json();
+
+                if (data.status === 'mutual') {
+                    // Langsung buka chat!
+                    p.status_mutual = 'mutual';
+                    loadDatabaseUsers();
+                    openChatView(p);
+                } else if (data.status === 'menunggu') {
+                    profileActionArea.innerHTML = `
+                        <button class="btn btn-large btn-waiting-follow" disabled>
+                            <i class="fa-solid fa-clock"></i> Menunggu Follback...
+                        </button>
+                        <p class="follow-warning">Kamu sudah mengikuti ${p.nama_lengkap}. Tunggu mereka memfollow balik.</p>
+                    `;
+                    loadDatabaseUsers();
+                }
+            } catch(e) {
+                console.error('Gagal follow:', e);
+                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Ikuti (Follow)';
+                btn.disabled = false;
+                alert('Gagal mengirim permintaan follow. Cek koneksi server.');
+            }
+        }
+
+        // ==========================================
+        // CHAT VIEW (mutual)
+        // ==========================================
+        async function openChatView(p) {
+            defaultView.classList.add('hidden');
+            profileView.classList.add('hidden');
+            chatView.classList.remove('hidden');
+
+            chatName.innerText = p.nama_lengkap;
+            chatAvatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.nama_lengkap)}&background=0F766E&color=fff`;
+            currentChatPartnerId = p.id;
+
+            // Bersihkan bubble lama
+            chatContent.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.85rem; padding:20px;">Memuat riwayat obrolan...</div>';
+
+            // Muat riwayat dari database
+            try {
+                const res = await fetch(`/api/pesan/${currentUser.id}/${p.id}`);
+                const data = await res.json();
+                chatContent.innerHTML = '';
+
+                if (data.success && data.pesan.length > 0) {
+                    data.pesan.forEach(msg => {
+                        const tipe = msg.pengirim_id == currentUser.id ? 'sent' : 'received';
+                        const waktu = new Date(msg.waktu_kirim);
+                        const timeStr = `${waktu.getHours().toString().padStart(2,'0')}:${waktu.getMinutes().toString().padStart(2,'0')}`;
+                        renderBubble(msg.isi_pesan, timeStr, tipe);
+                    });
+                } else {
+                    chatContent.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.85rem; padding:20px;">Belum ada pesan. Mulailah percakapan! 🌟</div>';
+                }
+            } catch(e) {
+                chatContent.innerHTML = '<div style="text-align:center; color:#e74c3c; font-size:0.85rem; padding:20px;">Gagal memuat riwayat pesan.</div>';
+                console.error('Gagal load riwayat:', e);
+            }
+        }
+
+        // ==========================================
+        // KIRIM & RENDER PESAN
+        // ==========================================
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (text === '' || !currentChatPartnerId) return;
+
+            socket.emit('kirim_pesan', {
+                pengirim_id: currentUser.id,
+                penerima_id: currentChatPartnerId,
+                isi_pesan: text
+            });
+
+            chatInput.value = '';
+            keyboard.classList.remove('show');
+            if (typeof indoKeyboard !== 'undefined') indoKeyboard.classList.remove('show');
+            updatePreview();
+            if (typeof updateIndoPreview === 'function') updateIndoPreview();
+        }
+
+        function renderBubble(teks, waktu, tipe) {
+            // Hapus pesan "belum ada pesan" jika ada
+            const emptyMsg = chatContent.querySelector('div[style*="text-align:center"]');
+            if (emptyMsg) emptyMsg.remove();
+
+            const wrapper = document.createElement('div');
+            wrapper.className = `chat-bubble-wrapper ${tipe}`;
+            wrapper.innerHTML = `<div class="chat-bubble">${teks}</div><div class="chat-time">${waktu}</div>`;
+            chatContent.appendChild(wrapper);
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+
+        // ==========================================
+        // MOBILE BACK BUTTON
+        // ==========================================
+        const openSidebar = () => document.body.classList.add('show-sidebar-mobile');
+        document.getElementById('backToSidebar').addEventListener('click', openSidebar);
+        document.getElementById('backToSidebarProfile').addEventListener('click', openSidebar);
+
+        // ==========================================
+        // KEYBOARD VIRTUAL ARAB (Advanced Engine)
+        // ==========================================
+        
+        // Mapping Keyboard Fisik Laptop (Standard Arabic 101)
+        const KEY_MAP = {
+            'q': 'ض', 'w': 'ص', 'e': 'ث', 'r': 'ق', 't': 'ف', 'y': 'غ', 'u': 'ع', 'i': 'ه', 'o': 'خ', 'p': 'ح', '[': 'ج', ']': 'د',
+            'a': 'ش', 's': 'س', 'd': 'ي', 'f': 'ب', 'g': 'ل', 'h': 'ا', 'j': 'ت', 'k': 'ن', 'l': 'م', ';': 'ك', "'": 'ط',
+            'z': 'ئ', 'x': 'ء', 'c': 'ؤ', 'v': 'ر', 'b': 'لا', 'n': 'ى', 'm': 'ة', ',': 'و', '.': 'ز', '/': 'ظ',
+            // Shift + Keys (Alif & Harakat)
+            'Q': 'َ', 'W': 'ً', 'E': 'ُ', 'R': 'ٌ', 'A': 'ِ', 'S': 'ٍ', 'X': 'ْ', 'Z': '~', '~': 'ّ',
+            'H': 'أ', 'Y': 'إ', 'N': 'آ', 'B': 'لآ', 'G': 'لأ', 'T': 'لإ'
+        };
+
+        function updatePreview() {
+            if (chatInput.value.trim() === '') {
+                kbPreview.innerText = defaultTitle;
+                kbPreview.classList.remove('typing');
+            } else {
+                kbPreview.innerText = chatInput.value;
+                kbPreview.classList.add('typing');
+            }
+        }
+
+        chatInput.addEventListener('focus', () => {
+            if (typeof currentKbMode !== 'undefined' && currentKbMode === 'indo') {
+                indoKeyboard.classList.add('show');
+            } else {
+                keyboard.classList.add('show');
+            }
+        });
+
+        chatInput.addEventListener('click', (e) => {
+            if (typeof currentKbMode !== 'undefined' && currentKbMode === 'indo') {
+                indoKeyboard.classList.add('show');
+            } else {
+                keyboard.classList.add('show');
+            }
+        });
+
+        closeKbBtn.addEventListener('click', () => keyboard.classList.remove('show'));
+
+        // Menangkap Keyboard Fisik Laptop
+        document.addEventListener('keydown', (e) => {
+            // Skip jika sedang mode keyboard Indonesia (VIP)
+            if (typeof currentKbMode !== 'undefined' && currentKbMode === 'indo') return;
+
+            // Hanya proses jika input chat sedang aktif/fokus (UI check)
+            if (!chatView.classList.contains('hidden') && keyboard.classList.contains('show')) {
+                const key = e.key;
+
+                // Handle special keys
+                if (key === 'Backspace') {
+                    // Biarkan default jika user tidak pilih tombol virtual, 
+                    // tapi kita tetap beri feedback visual
+                    highlightKey('Backspace');
+                    return;
+                }
+                
+                if (key === 'Enter') {
+                    e.preventDefault();
+                    highlightKey('Enter');
+                    sendMessage();
+                    return;
+                }
+                
+                if (key === ' ') {
+                    highlightKey(' ');
+                    // Update preview after default space
+                    setTimeout(updatePreview, 10);
+                    return;
+                }
+                
+                // Mapping physical key to Arabic
+                const arabChar = KEY_MAP[key];
+                if (arabChar) {
+                    e.preventDefault();
+                    insertText(arabChar);
+                    highlightKey(key);
+                } else if (key.length === 1 && /^[a-zA-Z0-9]+$/.test(key)) {
+                    // Block other latin/numbers if not mapped but show warning
+                    e.preventDefault();
+                    warning.classList.add('show');
+                    setTimeout(() => warning.classList.remove('show'), 1500);
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            unhighlightKey(e.key);
+        });
+
+        function highlightKey(key) {
+            const el = document.querySelector(`.kb-key[data-key="${key}"]`);
+            if (el) el.classList.add('pressed');
+        }
+
+        function unhighlightKey(key) {
+            const el = document.querySelector(`.kb-key[data-key="${key}"]`);
+            if (el) el.classList.remove('pressed');
+        }
+
+        const keysLayout = [
+            // Row 0: Harakat
+            [
+                { k: 'Q', a: 'َ', l: 'َ' }, { k: 'W', a: 'ً', l: 'ً' }, 
+                { k: 'E', a: 'ُ', l: 'ُ' }, { k: 'R', a: 'ٌ', l: 'ٌ' },
+                { k: 'A', a: 'ِ', l: 'ِ' }, { k: 'S', a: 'ٍ', l: 'ٍ' }, 
+                { k: 'X', a: 'ْ', l: 'ْ' }, { k: '~', a: 'ّ', l: 'ّ' }
+            ],
+            // Row 1
+            [
+                { k: 'q', a: 'ض' }, { k: 'w', a: 'ص' }, { k: 'e', a: 'ث' }, { k: 'r', a: 'ق' }, 
+                { k: 't', a: 'ف' }, { k: 'y', a: 'غ' }, { k: 'u', a: 'ع' }, { k: 'i', a: 'ه' }, 
+                { k: 'o', a: 'خ' }, { k: 'p', a: 'ح' }, { k: '[', a: 'ج' }, { k: ']', a: 'د' }
+            ],
+            // Row 2
+            [
+                { k: 'a', a: 'ش' }, { k: 's', a: 'س' }, { k: 'd', a: 'ي' }, { k: 'f', a: 'ب' }, 
+                { k: 'g', a: 'ل' }, { k: 'h', a: 'ا' }, { k: 'j', a: 'ت' }, { k: 'k', a: 'ن' }, 
+                { k: 'l', a: 'م' }, { k: ';', a: 'ك' }, { k: "'", a: 'ط' }
+            ],
+            // Row 3 (Special Alif)
+            [
+                { k: 'z', a: 'ئ' }, { k: 'x', a: 'ء' }, { k: 'c', a: 'ؤ' }, { k: 'v', a: 'ر' }, 
+                { k: 'b', a: 'لا' }, { k: 'n', a: 'ى' }, { k: 'm', a: 'ة' }, { k: ',', a: 'و' }, 
+                { k: '.', a: 'ز' }, { k: '/', a: 'ظ' }
+            ],
+            // Row 4: Actions
+            ['backspace', 'space', 'send']
+        ];
+
+        const keyboardContainer = document.getElementById('keyboardContainer');
+        keysLayout.forEach((row, idx) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'kb-row';
+            // Styling khusus untuk baris harakat agar lebih kecil
+            if (idx === 0) rowDiv.style.marginBottom = '12px';
+            
+            row.forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = 'kb-key';
+                btn.type = 'button';
+                
+                if (typeof key === 'string') {
+                    // Special keys
+                    if (key === 'space') {
+                        btn.classList.add('kb-space');
+                        btn.dataset.key = ' ';
+                        btn.innerHTML = 'مسافة (Space)';
+                        btn.onclick = () => insertText(' ');
+                    } else if (key === 'backspace') {
+                        btn.classList.add('kb-action');
+                        btn.dataset.key = 'Backspace';
+                        btn.innerHTML = '<i class="fa-solid fa-delete-left"></i>';
+                        btn.onclick = () => deleteText();
+                    } else if (key === 'send') {
+                        btn.classList.add('kb-action', 'kb-send');
+                        btn.dataset.key = 'Enter';
+                        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Kirim';
+                        btn.onclick = () => sendMessage();
+                    }
+                } else {
+                    // Regular Arabic keys
+                    btn.dataset.key = key.k;
+                    btn.dataset.arab = key.a;
+                    btn.innerText = key.a;
+                    
+                    // Style harakat row specifically
+                    if (idx === 0) {
+                        btn.style.backgroundColor = '#FFFBEB';
+                        btn.style.color = '#B45309'; // var(--accent-hover) approx
+                        btn.style.fontSize = '1.8rem';
+                        btn.style.height = '44px';
+                    }
+                    
+                    btn.onclick = () => insertText(key.a);
+                }
+
+                btn.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    createRipple(e);
+                });
+                rowDiv.appendChild(btn);
+            });
+            keyboardContainer.appendChild(rowDiv);
+        });
+
+        function insertText(text) {
+            const start = chatInput.selectionStart;
+            const end = chatInput.selectionEnd;
+            const cur = chatInput.value;
+            chatInput.value = cur.substring(0, start) + text + cur.substring(end);
+            chatInput.selectionStart = chatInput.selectionEnd = start + text.length;
+            chatInput.focus();
+            updatePreview();
+        }
+
+        function deleteText() {
+            const start = chatInput.selectionStart;
+            const end = chatInput.selectionEnd;
+            const cur = chatInput.value;
+            if (start === end && start > 0) {
+                chatInput.value = cur.substring(0, start - 1) + cur.substring(end);
+                chatInput.selectionStart = chatInput.selectionEnd = start - 1;
+            } else if (start !== end) {
+                chatInput.value = cur.substring(0, start) + cur.substring(end);
+                chatInput.selectionStart = chatInput.selectionEnd = start;
+            }
+            chatInput.focus();
+            updatePreview();
+            if (typeof updateIndoPreview === 'function') updateIndoPreview();
+        }
+
+        function createRipple(e) {
+            const button = e.currentTarget;
+            let ripple = button.querySelector('.kb-ripple');
+            if (!ripple) {
+                ripple = document.createElement('span');
+                ripple.classList.add('kb-ripple');
+                button.appendChild(ripple);
+            }
+            ripple.classList.remove('animate');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+            ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+            void button.offsetWidth;
+            ripple.classList.add('animate');
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        chatInput.addEventListener('input', updatePreview);
+
+        // ==========================================
+        // SEARCH & FILTER SIDEBAR
+        // ==========================================
+        const searchInput = document.getElementById('userSearchInput');
+        const filterTabs = document.querySelectorAll('#userFilterTabs .tab-btn');
+        let currentStatusFilter = 'all';
+
+        function filterUsers() {
+            const query = searchInput.value.toLowerCase();
+            const items = document.querySelectorAll('.account-item');
+
+            items.forEach(item => {
+                const name = item.dataset.name.toLowerCase();
+                const matchesName = name.includes(query);
+
+                let matchesStatus = true;
+                if (currentStatusFilter === 'mutual' && item.dataset.mutual !== 'true') matchesStatus = false;
+                if (currentStatusFilter === 'menunggu' && item.dataset.pending !== 'true') matchesStatus = false;
+
+                item.style.display = (matchesName && matchesStatus) ? 'flex' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterUsers);
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentStatusFilter = tab.dataset.filter;
+                filterUsers();
+            });
+        });
+
+        // ==========================================
+        // VIP KEYBOARD INDONESIA
+        // ==========================================
+        const VIP_WHITELIST = [
+            'syauqiquthbi210@gmail.com', 
+            'syauqiquthbi210@gmai.com', // Inclusive of potential typos
+            'nikmatulkhumairoh268@gmail.com'
+        ];
+        let isVipUser = false;
+        let currentKbMode = 'arab'; // 'arab' or 'indo'
+        let indoShiftActive = false;
+
+        // Detect VIP on page load
+        function detectVip() {
+            if (!currentUser) {
+                console.log('[VIP] Sesi belum siap.');
+                return;
+            }
+            
+            const isVipRole = currentUser.role === 'vip';
+            const isWhitelisted = VIP_WHITELIST.includes(currentUser.email);
+            isVipUser = isVipRole && isWhitelisted;
+
+            if (isVipUser) {
+                // Show mode toggle
+                const toggle = document.getElementById('kbModeToggle');
+                if (toggle) toggle.classList.add('vip-visible');
+                
+                // Show VIP badge
+                const badge = document.getElementById('vipBadgeHeader');
+                if (badge) badge.classList.add('show');
+                
+                // Build Indonesian keyboard if not built
+                if (!document.getElementById('indoKeyboardContainer').hasChildNodes()) {
+                    buildIndoKeyboard();
+                }
+                console.log('[VIP] Mode VIP diaktifkan untuk:', currentUser.email);
+            }
+        }
+
+        // Toggle between Arab and Indo mode
+        const btnModeArab = document.getElementById('btnModeArab');
+        const btnModeIndo = document.getElementById('btnModeIndo');
+        const indoKeyboard = document.getElementById('indoKeyboard');
+        const closeKbIndoBtn = document.getElementById('closeKbIndoBtn');
+
+        btnModeArab.addEventListener('click', () => switchKbMode('arab'));
+        btnModeIndo.addEventListener('click', () => switchKbMode('indo'));
+        closeKbIndoBtn.addEventListener('click', () => indoKeyboard.classList.remove('show'));
+
+        function switchKbMode(mode) {
+            currentKbMode = mode;
+            if (mode === 'arab') {
+                btnModeArab.classList.add('active');
+                btnModeIndo.classList.remove('active');
+                keyboard.classList.add('show');
+                indoKeyboard.classList.remove('show');
+                chatInput.placeholder = 'اكتب رسالتك هنا...';
+                chatInput.dir = 'rtl';
+                chatInput.inputMode = 'none';
+            } else {
+                btnModeIndo.classList.add('active');
+                btnModeArab.classList.remove('active');
+                keyboard.classList.remove('show');
+                indoKeyboard.classList.add('show');
+                chatInput.placeholder = 'Ketik pesan di sini...';
+                chatInput.dir = 'ltr';
+                chatInput.inputMode = 'none';
+            }
+            chatInput.focus();
+        }
+
+        // Indonesian QWERTY layout
+        const INDO_KEYS_LAYOUT = [
+            // Row 1: Numbers
+            [
+                { k: '1', upper: '!' }, { k: '2', upper: '@' }, { k: '3', upper: '#' },
+                { k: '4', upper: '$' }, { k: '5', upper: '%' }, { k: '6', upper: '^' },
+                { k: '7', upper: '&' }, { k: '8', upper: '*' }, { k: '9', upper: '(' },
+                { k: '0', upper: ')' }
+            ],
+            // Row 2: QWERTY
+            [
+                { k: 'q' }, { k: 'w' }, { k: 'e' }, { k: 'r' }, { k: 't' },
+                { k: 'y' }, { k: 'u' }, { k: 'i' }, { k: 'o' }, { k: 'p' }
+            ],
+            // Row 3: ASDF
+            [
+                { k: 'a' }, { k: 's' }, { k: 'd' }, { k: 'f' }, { k: 'g' },
+                { k: 'h' }, { k: 'j' }, { k: 'k' }, { k: 'l' }
+            ],
+            // Row 4: ZXCV
+            [
+                'shift',
+                { k: 'z' }, { k: 'x' }, { k: 'c' }, { k: 'v' }, { k: 'b' },
+                { k: 'n' }, { k: 'm' },
+                'backspace'
+            ],
+            // Row 5: Actions
+            ['space', 'send']
+        ];
+
+        function buildIndoKeyboard() {
+            const container = document.getElementById('indoKeyboardContainer');
+            container.innerHTML = '';
+
+            INDO_KEYS_LAYOUT.forEach((row, idx) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'kb-row';
+
+                row.forEach(key => {
+                    const btn = document.createElement('button');
+                    btn.className = 'kb-key';
+                    btn.type = 'button';
+
+                    if (typeof key === 'string') {
+                        if (key === 'space') {
+                            btn.classList.add('kb-space');
+                            btn.innerHTML = 'Spasi';
+                            btn.onclick = () => insertText(' ');
+                        } else if (key === 'backspace') {
+                            btn.classList.add('kb-action');
+                            btn.innerHTML = '<i class="fa-solid fa-delete-left"></i>';
+                            btn.onclick = () => deleteText();
+                        } else if (key === 'send') {
+                            btn.classList.add('kb-action', 'kb-send');
+                            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Kirim';
+                            btn.onclick = () => sendMessage();
+                        } else if (key === 'shift') {
+                            btn.classList.add('kb-shift');
+                            btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+                            btn.id = 'indoShiftBtn';
+                            btn.onclick = () => toggleIndoShift();
+                        }
+                    } else {
+                        btn.dataset.indoKey = key.k;
+                        btn.dataset.indoUpper = key.upper || key.k.toUpperCase();
+                        btn.innerText = key.k;
+                        btn.onclick = () => {
+                            const char = indoShiftActive ? (key.upper || key.k.toUpperCase()) : key.k;
+                            insertText(char);
+                            // Auto-off shift after one character
+                            if (indoShiftActive) toggleIndoShift();
+                        };
+                    }
+
+                    btn.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        createRipple(e);
+                    });
+                    rowDiv.appendChild(btn);
+                });
+
+                container.appendChild(rowDiv);
+            });
+        }
+
+        function toggleIndoShift() {
+            indoShiftActive = !indoShiftActive;
+            const shiftBtn = document.getElementById('indoShiftBtn');
+            if (shiftBtn) {
+                shiftBtn.classList.toggle('active', indoShiftActive);
+            }
+            // Update key labels
+            document.querySelectorAll('#indoKeyboardContainer .kb-key[data-indo-key]').forEach(btn => {
+                const key = btn.dataset.indoKey;
+                const upper = btn.dataset.indoUpper;
+                btn.innerText = indoShiftActive ? upper : key;
+            });
+        }
+
+        function updateIndoPreview() {
+            const previewEl = document.getElementById('kbPreviewIndo');
+            if (chatInput.value.trim() === '') {
+                previewEl.innerText = '🛡️ Keyboard Indonesia (Mode VIP)';
+                previewEl.classList.remove('typing');
+            } else {
+                previewEl.innerText = chatInput.value;
+                previewEl.classList.add('typing');
+            }
+        }
+
+        // Override physical keyboard handler for Indo mode
+        const originalKeydownHandler = document.onkeydown;
+        document.addEventListener('keydown', (e) => {
+            if (currentKbMode !== 'indo') return; // Let Arabic handler take over
+            if (chatView.classList.contains('hidden')) return;
+            if (!indoKeyboard.classList.contains('show')) return;
+
+            const key = e.key;
+
+            if (key === 'Backspace') return; // Let default handle
+            if (key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+                return;
+            }
+            if (key === ' ') {
+                // Let default handle space
+                setTimeout(updateIndoPreview, 10);
+                return;
+            }
+            if (key === 'Shift') return;
+
+            // Allow all printable characters in Indo mode
+            if (key.length === 1) {
+                e.preventDefault();
+                insertText(key);
+                updateIndoPreview();
+            }
+        }, true); // Use capture phase to intercept before Arabic handler
+
+        // Also update Indo preview on input
+        chatInput.addEventListener('input', () => {
+            if (currentKbMode === 'indo') updateIndoPreview();
+        });
+
+        // Init VIP detection after session recovery
+        setTimeout(() => detectVip(), 500);
+
+        // ==========================================
+        // FITUR HAPUS CHAT (LOGIC)
+        // ==========================================
+        const optionsBtn = document.getElementById('optionsBtn');
+        const optionsMenu = document.getElementById('optionsMenu');
+        const confirmModal = document.getElementById('confirmModal');
+        const targetChatNameSpan = document.getElementById('targetChatName');
+        const btnEksekusiHapus = document.getElementById('btnEksekusiHapus');
+
+        // Toggle dropdown menu
+        optionsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            optionsMenu.classList.toggle('show');
+        });
+
+        // Sembunyikan dropdown jika klik di luar
+        document.addEventListener('click', () => {
+            optionsMenu.classList.remove('show');
+        });
+
+        window.bukaModalHapus = function() {
+            if (!currentChatPartnerId) return;
+            const chatPartnerName = document.getElementById('chatName').innerText;
+            targetChatNameSpan.innerText = chatPartnerName;
+            confirmModal.classList.add('show');
+        };
+
+        window.tutupModalHapus = function() {
+            confirmModal.classList.remove('show');
+        };
+
+        async function eksekusiHapusChat() {
+            if (!currentChatPartnerId || !currentUser) return;
+            
+            btnEksekusiHapus.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menghapus...';
+            btnEksekusiHapus.disabled = true;
+
+            try {
+                const res = await fetch(`/api/pesan/${currentUser.id}/${currentChatPartnerId}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    // 1. Bersihkan tampilan lokal
+                    chatContent.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.85rem; padding:20px;">Chat telah dihapus.</div>';
+                    
+                    // 2. Beritahu partner via socket (sync real-time)
+                    socket.emit('hapus_chat', {
+                        peminta_id: currentUser.id,
+                        partner_id: currentChatPartnerId
+                    });
+
+                    // 3. Tutup modal
+                    tutupModalHapus();
+                    console.log('Chat berhasil dibersihkan.');
+                }
+            } catch (error) {
+                console.error('Gagal hapus chat:', error);
+                alert('Gagal menghapus chat. Cek koneksi server.');
+            } finally {
+                btnEksekusiHapus.innerHTML = 'Ya, Hapus Semua';
+                btnEksekusiHapus.disabled = false;
+            }
+        }
+
+        btnEksekusiHapus.addEventListener('click', eksekusiHapusChat);
+
+        // Listener Socket untuk sinkronisasi hapus chat dari sisi lawan
+        socket.on('chat_dihapus', (payload) => {
+            // Jika kita sedang buka chat dengan orang yang menghapus pesan tersebut
+            if (currentChatPartnerId == payload.partner_id) {
+                chatContent.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.85rem; padding:20px;">Teman bicara telah membersihkan riwayat chat ini.</div>';
+            }
+        });
+
+        // ==========================================
+        // INIT
+        // ==========================================
+        loadDatabaseUsers();
+    </script>
+</body>
+</html>

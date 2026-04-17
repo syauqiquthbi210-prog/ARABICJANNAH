@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fasih MA - Platform Belajar Bahasa Arab Madrasah Aliyah</title>
+    <meta name="description" content="Platform pendamping belajar Bahasa Arab khusus untuk siswa Madrasah Aliyah. Kuasai Mufrodat, Hiwar, dan raih skor sempurna di Boss Fight!">
+    
+    <!-- Google Fonts (Arabic + Latin) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* =========================================
+           DESIGN TOKENS
+           ========================================= */
+        :root {
+            --primary: #0F766E;
+            --primary-light: #14B8A6;
+            --primary-dark: #115E59;
+            --primary-deeper: #0A4F49;
+            --accent: #F59E0B;
+            --accent-hover: #D97706;
+            --accent-glow: rgba(245, 158, 11, 0.3);
+            --bg-light: #F8FAFC;
+            --bg-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Outfit', sans-serif;
+            --font-arabic: 'Scheherazade New', 'Amiri', serif;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* =========================================
+           RESET & GLOBAL
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); font-weight: 700; line-height: 1.2; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        strong { color: var(--primary); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* =========================================
+           BUTTONS
+           ========================================= */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 14px 32px; border-radius: 14px; font-weight: 600;
+            font-size: 1rem; cursor: pointer; border: none; transition: var(--transition); gap: 10px;
+            font-family: var(--font-body);
+        }
+        .btn i { font-size: 0.9em; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, #E8890C 100%);
+            color: white; box-shadow: 0 4px 20px 0 var(--accent-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px); box-shadow: 0 8px 30px 0 var(--accent-glow);
+        }
+        .btn-outline {
+            background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+        .btn-large { padding: 18px 42px; font-size: 1.15rem; border-radius: 16px; }
+        .btn-white-outline {
+            background: transparent; border: 2px solid var(--primary); color: var(--primary);
+            border-radius: 14px;
+        }
+        .btn-white-outline:hover { background: var(--primary); color: white; }
+
+        /* =========================================
+           1. HEADER (Glassmorphism)
+           ========================================= */
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: var(--transition); height: 80px; display: flex; align-items: center;
+        }
+        .header.scrolled {
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+        .header-container {
+            display: flex; align-items: center; justify-content: space-between; width: 100%;
+        }
+        .logo-text {
+            font-family: var(--font-arabic); font-size: 2rem; font-weight: 700;
+            color: white; letter-spacing: -0.5px;
+        }
+        .logo-accent { color: var(--accent); }
+        .main-nav ul { display: flex; gap: 32px; }
+        .main-nav a { font-weight: 500; color: rgba(255,255,255,0.7); font-size: 0.95rem; position: relative; }
+        .main-nav a:hover, .main-nav a.active { color: white; }
+        .main-nav a.active::after {
+            content: ''; position: absolute; bottom: -6px; left: 0; width: 100%;
+            height: 2px; background: var(--accent); border-radius: 2px;
+        }
+        .header-action .btn { padding: 10px 24px; border-radius: 12px; font-size: 0.9rem; }
+
+        /* =========================================
+           2. HERO SECTION (Dark Premium)
+           ========================================= */
+        .hero {
+            position: relative; min-height: 100vh; display: flex; align-items: center;
+            overflow: hidden; background: linear-gradient(160deg, #0A1628 0%, #0F2027 30%, var(--primary-deeper) 70%, #0A1628 100%);
+        }
+        /* Islamic geometric pattern overlay */
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314b8a6' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 1;
+        }
+        /* Glowing orbs */
+        .hero-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px); z-index: 1;
+        }
+        .hero-orb-1 { width: 500px; height: 500px; background: rgba(20, 184, 166, 0.15); top: -100px; right: -100px; }
+        .hero-orb-2 { width: 400px; height: 400px; background: rgba(245, 158, 11, 0.08); bottom: -100px; left: -50px; }
+        .hero-orb-3 { width: 300px; height: 300px; background: rgba(20, 184, 166, 0.1); top: 50%; left: 60%; }
+
+        .hero-container {
+            position: relative; z-index: 2; display: grid;
+            grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+            padding-top: 100px; padding-bottom: 80px;
+        }
+        .hero-content { animation: fadeInUp 0.8s ease-out; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; background: rgba(20, 184, 166, 0.15);
+            color: var(--primary-light); border-radius: 24px; font-weight: 600;
+            font-size: 0.85rem; margin-bottom: 28px;
+            border: 1px solid rgba(20, 184, 166, 0.2); backdrop-filter: blur(10px);
+        }
+        .hero-badge i { font-size: 0.75rem; }
+        .hero-title {
+            font-size: 3.5rem; letter-spacing: -1px; margin-bottom: 24px; color: white;
+            line-height: 1.15;
+        }
+        .hero-title strong {
+            color: var(--primary-light); position: relative; white-space: nowrap;
+        }
+        .hero-title strong::after {
+            content: ''; position: absolute; bottom: 4px; left: 0; width: 100%;
+            height: 10px; background: var(--accent-glow); z-index: -1; border-radius: 4px;
+        }
+        .hero-subtitle {
+            font-size: 1.15rem; color: rgba(255,255,255,0.6); margin-bottom: 40px;
+            font-weight: 400; line-height: 1.8; max-width: 520px;
+        }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+        .hero-stats {
+            display: flex; gap: 40px; margin-top: 48px; padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .hero-stat-num { font-size: 2rem; font-weight: 800; color: white; }
+        .hero-stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+        /* Hero Right: Arabic Calligraphy Showcase */
+        .hero-arabic-showcase {
+            animation: fadeInRight 1s ease-out 0.3s backwards;
+            position: relative;
+        }
+        .arabic-showcase-card {
+            background: rgba(255,255,255,0.03); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 28px;
+            padding: 48px 40px; text-align: center; position: relative; overflow: hidden;
+        }
+        .arabic-showcase-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(20,184,166,0.05), rgba(245,158,11,0.03));
+        }
+        .showcase-label {
+            display: inline-block; padding: 6px 16px; background: rgba(245,158,11,0.15);
+            color: var(--accent); border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+            margin-bottom: 24px; position: relative;
+        }
+        .showcase-arabic {
+            font-family: var(--font-arabic); font-size: 2.8rem; color: white;
+            line-height: 1.8; direction: rtl; margin-bottom: 20px; position: relative;
+            text-shadow: 0 2px 20px rgba(20,184,166,0.3);
+        }
+        .showcase-transliteration {
+            font-style: italic; color: rgba(255,255,255,0.5); font-size: 1rem;
+            margin-bottom: 8px; position: relative;
+        }
+        .showcase-meaning {
+            color: rgba(255,255,255,0.7); font-size: 1.05rem; font-weight: 500;
+            position: relative;
+        }
+        /* Floating decorative dots */
+        .float-dot {
+            position: absolute; width: 8px; height: 8px; border-radius: 50%;
+            background: var(--primary-light); opacity: 0.4;
+            animation: floatDot 6s ease-in-out infinite;
+        }
+        .float-dot:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+        .float-dot:nth-child(2) { top: 70%; right: 15%; animation-delay: 2s; width: 6px; height: 6px; }
+        .float-dot:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 4s; width: 10px; height: 10px; background: var(--accent); }
+        @keyframes floatDot {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+            50% { transform: translateY(-20px) scale(1.3); opacity: 0.7; }
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* =========================================
+           3. FITUR UNGGULAN (Replaces Kelas Section)
+           ========================================= */
+        .features-section {
+            padding: 100px 0; background: var(--bg-white);
+            position: relative;
+        }
+        .features-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+        }
+        .section-header { text-align: center; margin-bottom: 64px; max-width: 600px; margin-inline: auto; }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 16px; color: var(--text-main); }
+        .section-header p { font-size: 1.1rem; color: var(--text-muted); }
+        .section-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 16px; background: rgba(15,118,110,0.08);
+            color: var(--primary); border-radius: 20px; font-weight: 600;
+            font-size: 0.8rem; margin-bottom: 16px;
+        }
+
+        .features-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+        }
+        .feature-card {
+            background: var(--bg-white); border-radius: 24px; padding: 40px 32px;
+            border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+            transition: var(--transition); position: relative; overflow: hidden; text-align: center;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-card:hover { box-shadow: var(--shadow-xl); transform: translateY(-8px); border-color: transparent; }
+
+        .feature-card:nth-child(1)::before { background: var(--primary); }
+        .feature-card:nth-child(2)::before { background: var(--accent); }
+        .feature-card:nth-child(3)::before { background: #EF4444; }
+
+        .feature-icon-wrap {
+            width: 80px; height: 80px; border-radius: 20px; display: flex;
+            align-items: center; justify-content: center; font-size: 2rem;
+            margin: 0 auto 24px; position: relative;
+        }
+        .feature-card:nth-child(1) .feature-icon-wrap { background: rgba(15,118,110,0.1); color: var(--primary); }
+        .feature-card:nth-child(2) .feature-icon-wrap { background: rgba(245,158,11,0.1); color: var(--accent); }
+        .feature-card:nth-child(3) .feature-icon-wrap { background: rgba(239,68,68,0.1); color: #EF4444; }
+
+        .feature-card h3 { font-size: 1.4rem; margin-bottom: 12px; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+        .feature-arabic-label {
+            display: inline-block; margin-top: 16px; padding: 6px 14px;
+            background: rgba(15,118,110,0.06); border-radius: 10px;
+            font-family: var(--font-arabic); font-size: 1.2rem; color: var(--primary-dark);
+        }
+
+        /* =========================================
+           4. MAHFUDZOT (Arabic Motivation Quotes)
+           ========================================= */
+        .quotes-section {
+            padding: 100px 0; position: relative; overflow: hidden;
+            background: linear-gradient(160deg, #0A1628 0%, var(--primary-deeper) 50%, #0F2027 100%);
+        }
+        .quotes-section::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314b8a6' fill-opacity='0.035'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .quotes-container {
+            position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center;
+        }
+        .quotes-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; background: rgba(245,158,11,0.15);
+            color: var(--accent); border-radius: 24px; font-weight: 600;
+            font-size: 0.85rem; margin-bottom: 40px;
+        }
+        .quote-slide {
+            display: none; animation: quoteFade 0.6s ease;
+        }
+        .quote-slide.active { display: block; }
+        @keyframes quoteFade { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        .quote-arabic {
+            font-family: var(--font-arabic); font-size: 3rem; color: white;
+            line-height: 1.9; direction: rtl; margin-bottom: 24px;
+            text-shadow: 0 2px 30px rgba(20,184,166,0.2);
+        }
+        .quote-transliteration {
+            font-style: italic; color: rgba(255,255,255,0.45); font-size: 1.05rem;
+            margin-bottom: 12px; letter-spacing: 0.5px;
+        }
+        .quote-meaning {
+            color: rgba(255,255,255,0.7); font-size: 1.15rem; font-weight: 500;
+            margin-bottom: 8px; line-height: 1.6;
+        }
+        .quote-source {
+            color: var(--accent); font-size: 0.9rem; font-weight: 600; margin-top: 16px;
+        }
+        .quote-decorative-line {
+            width: 60px; height: 3px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin: 32px auto;
+        }
+        .quote-dots {
+            display: flex; gap: 10px; justify-content: center; margin-top: 32px;
+        }
+        .quote-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255,255,255,0.2); cursor: pointer; transition: var(--transition);
+            border: none;
+        }
+        .quote-dot.active { background: var(--accent); transform: scale(1.3); }
+        .quote-dot:hover { background: rgba(255,255,255,0.4); }
+
+        /* =========================================
+           5. WHY FASIH MA
+           ========================================= */
+        .why-section { padding: 100px 0; background: var(--bg-light); }
+        .why-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+        }
+        .why-text h2 { font-size: 2.5rem; margin-bottom: 24px; }
+        .why-text p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 36px; }
+        .why-list { display: flex; flex-direction: column; gap: 20px; }
+        .why-item {
+            display: flex; gap: 16px; align-items: flex-start;
+            padding: 20px; background: var(--bg-white); border-radius: 16px;
+            box-shadow: var(--shadow-sm); border: 1px solid transparent;
+            transition: var(--transition);
+        }
+        .why-item:hover { border-color: var(--primary-light); transform: translateX(8px); box-shadow: var(--shadow-md); }
+        .why-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: rgba(15,118,110,0.1); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+        .why-item h4 { font-size: 1.1rem; margin-bottom: 4px; }
+        .why-item p { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+        .why-visual {
+            display: flex; flex-direction: column; align-items: center; gap: 24px;
+        }
+        .level-preview-card {
+            background: var(--bg-white); border-radius: 20px; padding: 32px;
+            box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);
+            width: 100%; max-width: 400px; text-align: center;
+        }
+        .level-preview-card h3 { color: var(--primary); margin-bottom: 8px; }
+        .level-preview-card p { color: var(--text-muted); font-size: 0.9rem; }
+        .level-preview-icons {
+            display: flex; justify-content: center; gap: 20px; margin-top: 20px;
+        }
+        .lv-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: 700;
+        }
+        .lv-icon.completed { background: var(--primary); color: white; }
+        .lv-icon.current { background: var(--accent); color: white; animation: pulse 2s ease infinite; }
+        .lv-icon.locked { background: var(--border-color); color: var(--text-muted); }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); } 50% { box-shadow: 0 0 0 12px transparent; } }
+
+        /* =========================================
+           6. CTA SECTION
+           ========================================= */
+        .cta-section {
+            padding: 80px 0; background: var(--bg-white);
+        }
+        .cta-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 28px; padding: 64px 48px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .cta-card::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .cta-card h2 { font-size: 2.5rem; color: white; margin-bottom: 16px; position: relative; }
+        .cta-card p { color: rgba(255,255,255,0.7); font-size: 1.15rem; margin-bottom: 36px; position: relative; max-width: 600px; margin-inline: auto; }
+        .cta-buttons { display: flex; gap: 16px; justify-content: center; position: relative; flex-wrap: wrap; }
+
+        /* =========================================
+           7. FOOTER
+           ========================================= */
+        .footer {
+            background: linear-gradient(180deg, #0A1628 0%, #0F172A 100%);
+            color: white; padding: 80px 0 24px;
+        }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+        .footer-desc { color: rgba(255,255,255,0.5); margin-top: 20px; max-width: 360px; font-size: 0.95rem; }
+        .footer h4 { font-size: 1.15rem; margin-bottom: 20px; color: white; }
+        .footer-links ul { display: flex; flex-direction: column; gap: 12px; }
+        .footer-links a { color: rgba(255,255,255,0.5); font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent); padding-left: 4px; }
+        .social-icons { display: flex; gap: 12px; }
+        .social-icons a {
+            width: 42px; height: 42px; border-radius: 12px;
+            background: rgba(255,255,255,0.06); display: flex; align-items: center;
+            justify-content: center; color: rgba(255,255,255,0.6); transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .social-icons a:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+        .footer-bottom {
+            text-align: center; padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.35); font-size: 0.85rem;
+        }
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+        @media (max-width: 1024px) {
+            .hero-container { grid-template-columns: 1fr; text-align: center; }
+            .hero-subtitle { margin-inline: auto; }
+            .hero-buttons { justify-content: center; }
+            .hero-stats { justify-content: center; }
+            .hero-arabic-showcase { margin-top: 32px; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .main-nav { display: none; }
+            .hero-title { font-size: 2.5rem; }
+            .features-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+            .why-grid { grid-template-columns: 1fr; }
+            .why-visual { order: -1; }
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+            .quote-arabic { font-size: 2.2rem; }
+            .hero-stats { gap: 24px; }
+            .showcase-arabic { font-size: 2.2rem; }
+            .cta-card { padding: 48px 24px; }
+            .cta-card h2 { font-size: 2rem; }
+        }
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2rem; }
+            .hero-buttons { flex-direction: column; align-items: stretch; }
+            .hero-stats { flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HEADER -->
+    <header class="header" id="header">
+        <div class="container header-container">
+            <div class="logo">
+                <span class="logo-text">Fasih <span class="logo-accent">MA</span></span>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="active">Beranda</a></li>
+                    <li><a href="#fitur">Fitur</a></li>
+                    <li><a href="#mahfudzot">Mahfudzot</a></li>
+                    <li><a href="#kenapa">Kenapa Fasih MA?</a></li>
+                </ul>
+            </nav>
+            <div class="header-action">
+                <a href="login.html" class="btn btn-outline"><i class="fa-regular fa-user"></i> Masuk / Daftar</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 2. HERO SECTION -->
+        <section class="hero">
+            <div class="hero-orb hero-orb-1"></div>
+            <div class="hero-orb hero-orb-2"></div>
+            <div class="hero-orb hero-orb-3"></div>
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <span class="hero-badge"><i class="fa-solid fa-star"></i> Platform #1 untuk Siswa MA</span>
+                    <h1 class="hero-title">Kuasai <strong>Bahasa Arab</strong> dengan Cara yang Menyenangkan.</h1>
+                    <p class="hero-subtitle">Pelajari Mufrodat lewat flashcard, latih Hiwar dalam simulasi percakapan, dan uji kemampuanmu dalam Boss Fight dengan 8 level seru!</p>
+                    <div class="hero-buttons">
+                        <a href="login.html" class="btn btn-primary btn-large">Masuk / Daftar <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="#fitur" class="btn btn-outline btn-large"><i class="fa-solid fa-play"></i> Lihat Fitur</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div>
+                            <div class="hero-stat-num">8</div>
+                            <div class="hero-stat-label">Level Pembelajaran</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-num">160+</div>
+                            <div class="hero-stat-label">Kosakata Mufrodat</div>
+                        </div>
+                        <div>
+                            <div class="hero-stat-num">160</div>
+                            <div class="hero-stat-label">Soal Ujian</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-arabic-showcase">
+                    <div class="arabic-showcase-card">
+                        <span class="float-dot"></span>
+                        <span class="float-dot"></span>
+                        <span class="float-dot"></span>
+                        <span class="showcase-label">✨ Contoh Mufrodat Level 1</span>
+                        <div class="showcase-arabic">اَلسَّلَامُ عَلَيْكُمْ</div>
+                        <div class="showcase-transliteration">As-salāmu 'alaikum</div>
+                        <div class="showcase-meaning">"Semoga kesejahteraan dilimpahkan kepadamu"</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. FITUR UNGGULAN -->
+        <section id="fitur" class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge"><i class="fa-solid fa-rocket"></i> Fitur Unggulan</span>
+                    <h2>Tiga Pilar Pembelajaran</h2>
+                    <p>Setiap level dirancang dengan tiga tahapan pembelajaran yang saling melengkapi</p>
+                </div>
+                <div class="features-grid">
+                    <!-- Mufrodat -->
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="fa-solid fa-layer-group"></i></div>
+                        <h3>Flashcard Mufrodat</h3>
+                        <p>20 kosakata per level dengan flashcard interaktif yang bisa dibalik. Lihat huruf Arab, transliterasi, dan artinya sekaligus.</p>
+                        <span class="feature-arabic-label">مُفْرَدَات</span>
+                    </div>
+                    <!-- Hiwar -->
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="fa-solid fa-comments"></i></div>
+                        <h3>Simulasi Hiwar</h3>
+                        <p>10 dialog percakapan bertema yang tampil seperti chat WhatsApp. Belajar konteks percakapan Arab secara natural.</p>
+                        <span class="feature-arabic-label">حِوَار</span>
+                    </div>
+                    <!-- Boss Fight -->
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3>Evaluasi Boss Fight</h3>
+                        <p>20 soal pilihan ganda menantang. Wajib skor minimal 90% untuk membuka level berikutnya. Siap bertarung?</p>
+                        <span class="feature-arabic-label">إِخْتِبَار</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. MAHFUDZOT (Arabic Motivational Quotes) -->
+        <section id="mahfudzot" class="quotes-section">
+            <div class="container quotes-container">
+                <span class="quotes-badge"><i class="fa-solid fa-feather-pointed"></i> Mahfudzot (Kata Mutiara)</span>
+
+                <div class="quotes-carousel" id="quotesCarousel">
+                    <!-- Quote 1 -->
+                    <div class="quote-slide active">
+                        <div class="quote-arabic">مَنْ جَدَّ وَجَدَ</div>
+                        <div class="quote-transliteration">Man jadda wajada</div>
+                        <div class="quote-decorative-line"></div>
+                        <div class="quote-meaning">"Siapa yang bersungguh-sungguh, ia akan berhasil."</div>
+                        <div class="quote-source">— Mahfudzot Masyhur</div>
+                    </div>
+                    <!-- Quote 2 -->
+                    <div class="quote-slide">
+                        <div class="quote-arabic">اُطْلُبُوا الْعِلْمَ مِنَ الْمَهْدِ إِلَى اللَّحْدِ</div>
+                        <div class="quote-transliteration">Uthlubul 'ilma minal mahdi ilal lahdi</div>
+                        <div class="quote-decorative-line"></div>
+                        <div class="quote-meaning">"Tuntutlah ilmu dari buaian hingga liang lahat."</div>
+                        <div class="quote-source">— Hadits Masyhur</div>
+                    </div>
+                    <!-- Quote 3 -->
+                    <div class="quote-slide">
+                        <div class="quote-arabic">الْعِلْمُ نُورٌ</div>
+                        <div class="quote-transliteration">Al-'ilmu nuurun</div>
+                        <div class="quote-decorative-line"></div>
+                        <div class="quote-meaning">"Ilmu itu adalah cahaya."</div>
+                        <div class="quote-source">— Mahfudzot Islami</div>
+                    </div>
+                    <!-- Quote 4 -->
+                    <div class="quote-slide">
+                        <div class="quote-arabic">خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ</div>
+                        <div class="quote-transliteration">Khairun naasi anfa'uhum linnaas</div>
+                        <div class="quote-decorative-line"></div>
+                        <div class="quote-meaning">"Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lain."</div>
+                        <div class="quote-source">— HR. Ahmad, Thabrani, Daruqutni</div>
+                    </div>
+                    <!-- Quote 5 -->
+                    <div class="quote-slide">
+                        <div class="quote-arabic">مَنْ صَبَرَ ظَفِرَ</div>
+                        <div class="quote-transliteration">Man shabara zhafira</div>
+                        <div class="quote-decorative-line"></div>
+                        <div class="quote-meaning">"Siapa yang bersabar, ia akan beruntung."</div>
+                        <div class="quote-source">— Mahfudzot Masyhur</div>
+                    </div>
+                </div>
+
+                <div class="quote-dots" id="quoteDots"></div>
+            </div>
+        </section>
+
+        <!-- 5. KENAPA FASIH MA? -->
+        <section id="kenapa" class="why-section">
+            <div class="container why-grid">
+                <div class="why-text">
+                    <span class="section-badge"><i class="fa-solid fa-heart"></i> Kenapa Fasih MA?</span>
+                    <h2>Dirancang Khusus untuk <strong>Siswa Madrasah</strong></h2>
+                    <p>Kami memadukan kurikulum resmi dengan metode gamifikasi modern agar belajar bahasa Arab tidak membosankan.</p>
+                    <div class="why-list">
+                        <div class="why-item">
+                            <div class="why-icon"><i class="fa-solid fa-gamepad"></i></div>
+                            <div>
+                                <h4>Gamifikasi Seru</h4>
+                                <p>Sistem level dan poin membuat belajar terasa seperti bermain game.</p>
+                            </div>
+                        </div>
+                        <div class="why-item">
+                            <div class="why-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div>
+                                <h4>Berbasis Kurikulum</h4>
+                                <p>Materi disusun sesuai silabus Bahasa Arab Madrasah Aliyah.</p>
+                            </div>
+                        </div>
+                        <div class="why-item">
+                            <div class="why-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                            <div>
+                                <h4>Akses di Mana Saja</h4>
+                                <p>Belajar dari HP, tablet, atau laptop tanpa perlu install aplikasi.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="why-visual">
+                    <div class="level-preview-card">
+                        <h3><i class="fa-solid fa-map"></i> Peta Petualanganmu</h3>
+                        <p>Selesaikan 8 level untuk menjadi master!</p>
+                        <div class="level-preview-icons">
+                            <div class="lv-icon completed"><i class="fa-solid fa-check"></i></div>
+                            <div class="lv-icon completed"><i class="fa-solid fa-check"></i></div>
+                            <div class="lv-icon current">3</div>
+                            <div class="lv-icon locked"><i class="fa-solid fa-lock"></i></div>
+                            <div class="lv-icon locked"><i class="fa-solid fa-lock"></i></div>
+                            <div class="lv-icon locked"><i class="fa-solid fa-lock"></i></div>
+                            <div class="lv-icon locked"><i class="fa-solid fa-lock"></i></div>
+                            <div class="lv-icon locked"><i class="fa-solid fa-crown"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. CTA SECTION -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-card">
+                    <h2>Siap Menjadi Fasih?</h2>
+                    <p>Daftar sekarang dan mulai petualangan belajar Bahasa Arab dari Level 1. Gratis selamanya!</p>
+                    <div class="cta-buttons">
+                        <a href="register.html" class="btn btn-primary btn-large">Daftar Sekarang <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="login.html" class="btn btn-outline btn-large"><i class="fa-solid fa-right-to-bracket"></i> Sudah Punya Akun</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 7. FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <span class="logo-text">Fasih <span class="logo-accent">MA</span></span>
+                    <p class="footer-desc">Berdedikasi untuk menciptakan pengalaman belajar Bahasa Arab yang menyenangkan, interaktif, dan mudah diakses oleh seluruh siswa Madrasah Aliyah di Indonesia.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Tautan Cepat</h4>
+                    <ul>
+                        <li><a href="#fitur">Fitur Unggulan</a></li>
+                        <li><a href="#mahfudzot">Mahfudzot</a></li>
+                        <li><a href="login.html">Masuk</a></li>
+                        <li><a href="register.html">Daftar</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Ikuti Kami</h4>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Fasih MA. Hak Cipta Dilindungi Undang-Undang.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Mahfudzot Carousel
+        const slides = document.querySelectorAll('.quote-slide');
+        const dotsContainer = document.getElementById('quoteDots');
+        let currentQuote = 0;
+
+        // Create dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'quote-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', `Quote ${i + 1}`);
+            dot.addEventListener('click', () => goToQuote(i));
+            dotsContainer.appendChild(dot);
+        });
+
+        function goToQuote(index) {
+            slides[currentQuote].classList.remove('active');
+            dotsContainer.children[currentQuote].classList.remove('active');
+            currentQuote = index;
+            slides[currentQuote].classList.add('active');
+            dotsContainer.children[currentQuote].classList.add('active');
+        }
+
+        // Auto-rotate every 5 seconds
+        setInterval(() => {
+            goToQuote((currentQuote + 1) % slides.length);
+        }, 5000);
+    </script>
+</body>
+</html>

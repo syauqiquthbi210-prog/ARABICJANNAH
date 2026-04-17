@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="id" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Mengetik Arab - Fasih MA</title>
+    <meta name="description" content="Latih kemampuan mengetik huruf Arab menggunakan keyboard virtual interaktif yang bisa digunakan dengan klik maupun keyboard fisik laptop.">
+
+    <!-- Google Fonts (Arabic + Latin) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           DESIGN TOKENS
+           ========================================= */
+        :root {
+            --primary: #0F766E;
+            --primary-dark: #115E59;
+            --primary-light: #14B8A6;
+            --primary-glow: rgba(20, 184, 166, 0.15);
+            --accent: #F59E0B;
+            --accent-hover: #D97706;
+            --dark: #0F172A;
+            --dark-card: #1E293B;
+            --gray: #64748B;
+            --light: #F1F5F9;
+            --white: #FFFFFF;
+            --danger: #EF4444;
+            --success: #10B981;
+            --border: #E2E8F0;
+            --font-arabic: 'Scheherazade New', 'Amiri', serif;
+            --font-body: 'Outfit', sans-serif;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* =========================================
+           RESET & GLOBAL
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--light);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%230F766E' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           HEADER
+           ========================================= */
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .back-btn {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        .back-btn:hover { color: white; }
+        .page-title {
+            font-weight: 700;
+            color: var(--primary-light);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* =========================================
+           MAIN CONTENT
+           ========================================= */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+
+        /* Intro Card */
+        .intro-card {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 50%, var(--dark) 100%);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2314b8a6' fill-opacity='0.04'%3E%3Cpath d='M20 20c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .intro-card h2 {
+            font-family: var(--font-arabic);
+            font-size: 2.2rem;
+            color: white;
+            position: relative;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 15px rgba(20,184,166,0.3);
+        }
+        .intro-card p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+            position: relative;
+        }
+        .intro-card .hint-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 6px 14px;
+            background: rgba(245,158,11,0.15);
+            color: var(--accent);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        /* Mode Tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .mode-tab {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            border: 2px solid var(--border);
+            background: var(--white);
+            color: var(--gray);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-body);
+        }
+        .mode-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(15,118,110,0.25);
+        }
+        .mode-tab:hover:not(.active) { border-color: var(--primary-light); }
+
+        /* =========================================
+           INPUT AREA (Screen / Layar Jawaban)
+           ========================================= */
+        .input-area {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 2px solid var(--border);
+            transition: border-color 0.3s;
+        }
+        .input-area:focus-within {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 20px rgba(20,184,166,0.1);
+        }
+        .input-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .input-label span {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        .char-count {
+            font-size: 0.8rem;
+            color: var(--gray);
+            background: var(--light);
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        /* The Arabic input */
+        #layar-jawaban {
+            width: 100%;
+            min-height: 80px;
+            padding: 20px;
+            font-family: var(--font-arabic);
+            font-size: 2.5rem;
+            line-height: 1.8;
+            direction: rtl;
+            text-align: right;
+            border: none;
+            background: var(--light);
+            border-radius: 14px;
+            color: var(--dark);
+            outline: none;
+            resize: vertical;
+            caret-color: var(--primary);
+        }
+        #layar-jawaban::placeholder {
+            color: #CBD5E1;
+            font-size: 1.8rem;
+        }
+
+        /* Challenge Area (Mode Latihan) */
+        .challenge-area {
+            display: none;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .challenge-area.active { display: block; }
+        .challenge-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .challenge-word {
+            font-family: var(--font-arabic);
+            font-size: 3rem;
+            color: var(--primary-dark);
+            direction: rtl;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(15,118,110,0.08);
+        }
+        .challenge-meaning {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-bottom: 16px;
+        }
+        .challenge-result {
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 10px 16px;
+            border-radius: 10px;
+            display: none;
+        }
+        .challenge-result.correct {
+            display: inline-block;
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        .challenge-result.wrong {
+            display: inline-block;
+            background: rgba(239,68,68,0.1);
+            color: var(--danger);
+        }
+        .challenge-score {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 12px;
+        }
+        .score-item {
+            text-align: center;
+        }
+        .score-num {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        /* =========================================
+           VIRTUAL KEYBOARD
+           ========================================= */
+        .keyboard-container {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+        .keyboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .keyboard-header h3 {
+            font-size: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .keyboard-header h3 i { color: var(--primary); }
+
+        .key-hint {
+            font-size: 0.78rem;
+            color: var(--gray);
+            background: var(--light);
+            padding: 4px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .key-hint i { color: var(--accent); font-size: 0.7rem; }
+
+        /* Keyboard Rows */
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .keyboard-row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Harakat Row */
+        .harakat-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        /* Individual Key */
+        .tombol-arab {
+            position: relative;
+            min-width: 52px;
+            height: 56px;
+            border: 2px solid var(--border);
+            border-bottom: 4px solid #CBD5E1;
+            border-radius: 12px;
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            transition: all 0.1s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tombol-arab:hover {
+            border-color: var(--primary-light);
+            background: #F0FDFA;
+        }
+        .tombol-arab:active,
+        .tombol-arab.pressed {
+            transform: translateY(2px) scale(0.97);
+            border-bottom-width: 2px;
+            background: #CCFBF1;
+            border-color: var(--primary);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .key-arab {
+            font-family: var(--font-arabic);
+            font-size: 1.5rem;
+            color: var(--dark);
+            line-height: 1;
+        }
+        .key-latin {
+            font-size: 0.6rem;
+            color: #94A3B8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Harakat Keys */
+        .tombol-harakat {
+            min-width: 46px;
+            height: 44px;
+            border: 2px solid var(--border);
+            border-bottom: 3px solid #CBD5E1;
+            border-radius: 10px;
+            background: #FFFBEB;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+        .tombol-harakat:hover {
+            border-color: var(--accent);
+            background: #FEF3C7;
+        }
+        .tombol-harakat:active,
+        .tombol-harakat.pressed {
+            transform: translateY(2px) scale(0.97);
+            border-bottom-width: 2px;
+            background: #FDE68A;
+            border-color: var(--accent-hover);
+        }
+        .tombol-harakat .key-arab {
+            font-size: 1.8rem;
+            color: var(--accent-hover);
+        }
+        .tombol-harakat .key-latin {
+            font-size: 0.55rem;
+            color: var(--accent-hover);
+        }
+
+        /* Special Action Keys */
+        .tombol-aksi {
+            height: 56px;
+            border: 2px solid var(--border);
+            border-bottom: 4px solid #CBD5E1;
+            border-radius: 12px;
+            background: var(--light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 16px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--dark);
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+        .tombol-aksi:hover {
+            background: #E2E8F0;
+        }
+        .tombol-aksi:active,
+        .tombol-aksi.pressed {
+            transform: translateY(2px) scale(0.97);
+            border-bottom-width: 2px;
+            background: #CBD5E1;
+        }
+        .tombol-aksi i { font-size: 1rem; }
+
+        /* Space Bar */
+        .tombol-aksi.key-space {
+            flex: 1;
+            max-width: 360px;
+        }
+
+        /* Enter/Submit Button */
+        .tombol-aksi.key-enter {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-color: var(--primary-dark);
+            border-bottom-color: #0A4F49;
+            min-width: 100px;
+        }
+        .tombol-aksi.key-enter:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+        }
+        .tombol-aksi.key-enter:active,
+        .tombol-aksi.key-enter.pressed {
+            background: var(--primary-dark);
+            border-bottom-width: 2px;
+        }
+
+        /* Backspace */
+        .tombol-aksi.key-backspace {
+            min-width: 80px;
+        }
+        .tombol-aksi.key-backspace:active,
+        .tombol-aksi.key-backspace.pressed {
+            background: rgba(239,68,68,0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+        @media (max-width: 768px) {
+            .tombol-arab {
+                min-width: 36px;
+                height: 48px;
+            }
+            .key-arab { font-size: 1.2rem; }
+            .key-latin { font-size: 0.5rem; }
+            .keyboard-row { gap: 3px; }
+            .tombol-aksi { padding: 0 10px; font-size: 0.72rem; }
+            .tombol-harakat { min-width: 36px; height: 38px; }
+            .tombol-harakat .key-arab { font-size: 1.4rem; }
+            #layar-jawaban { font-size: 2rem; min-height: 60px; padding: 14px; }
+            .intro-card { padding: 20px; }
+            .intro-card h2 { font-size: 1.8rem; }
+            .challenge-word { font-size: 2.4rem; }
+            .mode-tabs { flex-wrap: wrap; }
+        }
+        @media (max-width: 480px) {
+            .tombol-arab {
+                min-width: 28px;
+                height: 42px;
+                border-radius: 8px;
+            }
+            .key-arab { font-size: 1rem; }
+            .key-latin { display: none; }
+            .tombol-aksi { font-size: 0.65rem; min-width: 50px; }
+            .harakat-row { gap: 3px; }
+            .tombol-harakat { min-width: 30px; height: 34px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+        <div class="page-title"><i class="fa-solid fa-keyboard"></i> Latihan Ketik Arab</div>
+    </header>
+
+    <main class="main-content">
+        <!-- INTRO CARD -->
+        <div class="intro-card">
+            <h2>تَعَلَّمْ كِتَابَةَ الْحُرُوفِ الْعَرَبِيَّةِ</h2>
+            <p>Latih kemampuan mengetik huruf Arab menggunakan keyboard virtual atau keyboard fisik laptopmu!</p>
+            <div class="hint-badge"><i class="fa-solid fa-lightbulb"></i> Tekan tombol di keyboard laptop → Huruf Arab muncul otomatis</div>
+        </div>
+
+        <!-- MODE TABS -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="tabBebas" onclick="setMode('bebas')"><i class="fa-solid fa-pen-nib"></i> Mode Bebas</button>
+            <button class="mode-tab" id="tabLatihan" onclick="setMode('latihan')"><i class="fa-solid fa-dumbbell"></i> Mode Latihan</button>
+        </div>
+
+        <!-- CHALLENGE AREA (Mode Latihan) -->
+        <div class="challenge-area" id="challengeArea">
+            <div class="challenge-label"><i class="fa-solid fa-bullseye"></i> Ketik kata berikut:</div>
+            <div class="challenge-word" id="challengeWord">كِتَاب</div>
+            <div class="challenge-meaning" id="challengeMeaning">"Buku"</div>
+            <div class="challenge-result" id="challengeResult"></div>
+            <div class="challenge-score">
+                <div class="score-item"><div class="score-num" id="scoreBenar" style="color: var(--success);">0</div><div class="score-label">Benar</div></div>
+                <div class="score-item"><div class="score-num" id="scoreSalah" style="color: var(--danger);">0</div><div class="score-label">Salah</div></div>
+                <div class="score-item"><div class="score-num" id="scoreSoal" style="color: var(--primary);">1</div><div class="score-label">Soal ke-</div></div>
+            </div>
+        </div>
+
+        <!-- INPUT AREA -->
+        <div class="input-area" id="inputArea">
+            <div class="input-label">
+                <span><i class="fa-solid fa-pen-to-square"></i> Layar Ketikan</span>
+                <span class="char-count" id="charCount">0 karakter</span>
+            </div>
+            <textarea id="layar-jawaban" placeholder="اُكْتُبْ هُنَا..." rows="2"></textarea>
+        </div>
+
+        <!-- VIRTUAL KEYBOARD -->
+        <div class="keyboard-container">
+            <div class="keyboard-header">
+                <h3><i class="fa-solid fa-keyboard"></i> Keyboard Arab Virtual</h3>
+                <span class="key-hint"><i class="fa-solid fa-circle-info"></i> Ketik langsung dari keyboard laptopmu!</span>
+            </div>
+
+            <!-- Harakat Row -->
+            <div class="harakat-row">
+                <button class="tombol-harakat" data-key="Q" data-arab="َ"><span class="key-arab">ـَ</span><span class="key-latin">Shift+Q</span></button>
+                <button class="tombol-harakat" data-key="W" data-arab="ً"><span class="key-arab">ـً</span><span class="key-latin">Shift+W</span></button>
+                <button class="tombol-harakat" data-key="E" data-arab="ُ"><span class="key-arab">ـُ</span><span class="key-latin">Shift+E</span></button>
+                <button class="tombol-harakat" data-key="R" data-arab="ٌ"><span class="key-arab">ـٌ</span><span class="key-latin">Shift+R</span></button>
+                <button class="tombol-harakat" data-key="A" data-arab="ِ"><span class="key-arab">ـِ</span><span class="key-latin">Shift+A</span></button>
+                <button class="tombol-harakat" data-key="S" data-arab="ٍ"><span class="key-arab">ـٍ</span><span class="key-latin">Shift+S</span></button>
+                <button class="tombol-harakat" data-key="X" data-arab="ْ"><span class="key-arab">ـْ</span><span class="key-latin">Shift+X</span></button>
+                <button class="tombol-harakat" data-key="~" data-arab="ّ"><span class="key-arab">ـّ</span><span class="key-latin">Shift+`</span></button>
+            </div>
+
+            <!-- Row 1: ض ص ث ق ف غ ع ه خ ح ج د -->
+            <div class="keyboard-row">
+                <button class="tombol-arab" data-key="q" data-arab="ض"><span class="key-arab">ض</span><span class="key-latin">Q</span></button>
+                <button class="tombol-arab" data-key="w" data-arab="ص"><span class="key-arab">ص</span><span class="key-latin">W</span></button>
+                <button class="tombol-arab" data-key="e" data-arab="ث"><span class="key-arab">ث</span><span class="key-latin">E</span></button>
+                <button class="tombol-arab" data-key="r" data-arab="ق"><span class="key-arab">ق</span><span class="key-latin">R</span></button>
+                <button class="tombol-arab" data-key="t" data-arab="ف"><span class="key-arab">ف</span><span class="key-latin">T</span></button>
+                <button class="tombol-arab" data-key="y" data-arab="غ"><span class="key-arab">غ</span><span class="key-latin">Y</span></button>
+                <button class="tombol-arab" data-key="u" data-arab="ع"><span class="key-arab">ع</span><span class="key-latin">U</span></button>
+                <button class="tombol-arab" data-key="i" data-arab="ه"><span class="key-arab">ه</span><span class="key-latin">I</span></button>
+                <button class="tombol-arab" data-key="o" data-arab="خ"><span class="key-arab">خ</span><span class="key-latin">O</span></button>
+                <button class="tombol-arab" data-key="p" data-arab="ح"><span class="key-arab">ح</span><span class="key-latin">P</span></button>
+                <button class="tombol-arab" data-key="[" data-arab="ج"><span class="key-arab">ج</span><span class="key-latin">[</span></button>
+                <button class="tombol-arab" data-key="]" data-arab="د"><span class="key-arab">د</span><span class="key-latin">]</span></button>
+            </div>
+
+            <!-- Row 2: ش س ي ب ل ا ت ن م ك ط -->
+            <div class="keyboard-row">
+                <button class="tombol-arab" data-key="a" data-arab="ش"><span class="key-arab">ش</span><span class="key-latin">A</span></button>
+                <button class="tombol-arab" data-key="s" data-arab="س"><span class="key-arab">س</span><span class="key-latin">S</span></button>
+                <button class="tombol-arab" data-key="d" data-arab="ي"><span class="key-arab">ي</span><span class="key-latin">D</span></button>
+                <button class="tombol-arab" data-key="f" data-arab="ب"><span class="key-arab">ب</span><span class="key-latin">F</span></button>
+                <button class="tombol-arab" data-key="g" data-arab="ل"><span class="key-arab">ل</span><span class="key-latin">G</span></button>
+                <button class="tombol-arab" data-key="h" data-arab="ا"><span class="key-arab">ا</span><span class="key-latin">H</span></button>
+                <button class="tombol-arab" data-key="j" data-arab="ت"><span class="key-arab">ت</span><span class="key-latin">J</span></button>
+                <button class="tombol-arab" data-key="k" data-arab="ن"><span class="key-arab">ن</span><span class="key-latin">K</span></button>
+                <button class="tombol-arab" data-key="l" data-arab="م"><span class="key-arab">م</span><span class="key-latin">L</span></button>
+                <button class="tombol-arab" data-key=";" data-arab="ك"><span class="key-arab">ك</span><span class="key-latin">;</span></button>
+                <button class="tombol-arab" data-key="'" data-arab="ط"><span class="key-arab">ط</span><span class="key-latin">'</span></button>
+            </div>
+
+            <!-- Row 3: ئ ء ؤ ر لا ى ة و ز ظ -->
+            <div class="keyboard-row">
+                <button class="tombol-arab" data-key="z" data-arab="ئ"><span class="key-arab">ئ</span><span class="key-latin">Z</span></button>
+                <button class="tombol-arab" data-key="x" data-arab="ء"><span class="key-arab">ء</span><span class="key-latin">X</span></button>
+                <button class="tombol-arab" data-key="c" data-arab="ؤ"><span class="key-arab">ؤ</span><span class="key-latin">C</span></button>
+                <button class="tombol-arab" data-key="v" data-arab="ر"><span class="key-arab">ر</span><span class="key-latin">V</span></button>
+                <button class="tombol-arab" data-key="b" data-arab="لا"><span class="key-arab">لا</span><span class="key-latin">B</span></button>
+                <button class="tombol-arab" data-key="n" data-arab="ى"><span class="key-arab">ى</span><span class="key-latin">N</span></button>
+                <button class="tombol-arab" data-key="m" data-arab="ة"><span class="key-arab">ة</span><span class="key-latin">M</span></button>
+                <button class="tombol-arab" data-key="," data-arab="و"><span class="key-arab">و</span><span class="key-latin">,</span></button>
+                <button class="tombol-arab" data-key="." data-arab="ز"><span class="key-arab">ز</span><span class="key-latin">.</span></button>
+                <button class="tombol-arab" data-key="/" data-arab="ظ"><span class="key-arab">ظ</span><span class="key-latin">/</span></button>
+            </div>
+
+            <!-- Row 4: Shift Keys (Alif variations) -->
+            <div class="keyboard-row">
+                <button class="tombol-arab" data-key="H" data-arab="أ"><span class="key-arab">أ</span><span class="key-latin">Shift+H</span></button>
+                <button class="tombol-arab" data-key="Y" data-arab="إ"><span class="key-arab">إ</span><span class="key-latin">Shift+Y</span></button>
+                <button class="tombol-arab" data-key="N" data-arab="آ"><span class="key-arab">آ</span><span class="key-latin">Shift+N</span></button>
+                <button class="tombol-arab" data-key="B" data-arab="لآ"><span class="key-arab">لآ</span><span class="key-latin">Shift+B</span></button>
+                <button class="tombol-arab" data-key="G" data-arab="لأ"><span class="key-arab">لأ</span><span class="key-latin">Shift+G</span></button>
+                <button class="tombol-arab" data-key="T" data-arab="لإ"><span class="key-arab">لإ</span><span class="key-latin">Shift+T</span></button>
+            </div>
+
+            <!-- Row 5: Actions (Backspace, Space, Enter) -->
+            <div class="keyboard-row" style="margin-top: 8px;">
+                <button class="tombol-aksi key-backspace" data-key="Backspace" id="btnBackspace">
+                    <i class="fa-solid fa-delete-left"></i> Hapus
+                </button>
+                <button class="tombol-aksi key-space" data-key=" " id="btnSpace">
+                    <i class="fa-solid fa-arrows-left-right-to-line"></i> Spasi
+                </button>
+                <button class="tombol-aksi key-enter" data-key="Enter" id="btnEnter">
+                    <i class="fa-solid fa-paper-plane"></i> Jawab
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- =========================================
+         JAVASCRIPT ENGINE
+         ========================================= -->
+    <script>
+        // ==========================================
+        // 1. ELEMEN & STATE
+        // ==========================================
+        const layarJawaban = document.getElementById('layar-jawaban');
+        const charCount = document.getElementById('charCount');
+        const challengeArea = document.getElementById('challengeArea');
+        const challengeWord = document.getElementById('challengeWord');
+        const challengeMeaning = document.getElementById('challengeMeaning');
+        const challengeResult = document.getElementById('challengeResult');
+
+        let currentMode = 'bebas'; // 'bebas' or 'latihan'
+        let latihanIndex = 0;
+        let latihanBenar = 0;
+        let latihanSalah = 0;
+
+        // Daftar kata latihan (bisa diperluas dari database nanti)
+        const LATIHAN_KATA = [
+            { arab: 'كِتَاب', arti: 'Buku' },
+            { arab: 'مَدْرَسَة', arti: 'Sekolah' },
+            { arab: 'قَلَم', arti: 'Pena' },
+            { arab: 'بَيْت', arti: 'Rumah' },
+            { arab: 'طَالِب', arti: 'Murid (Lk)' },
+            { arab: 'طَالِبَة', arti: 'Murid (Pr)' },
+            { arab: 'مُعَلِّم', arti: 'Guru (Lk)' },
+            { arab: 'كُرْسِيّ', arti: 'Kursi' },
+            { arab: 'بَاب', arti: 'Pintu' },
+            { arab: 'نَافِذَة', arti: 'Jendela' },
+            { arab: 'سَبُّورَة', arti: 'Papan Tulis' },
+            { arab: 'حَقِيبَة', arti: 'Tas' },
+            { arab: 'سَاعَة', arti: 'Jam' },
+            { arab: 'صَدِيق', arti: 'Teman (Lk)' },
+            { arab: 'مَاء', arti: 'Air' },
+        ];
+
+        // Mapping keyboard fisik ke huruf Arab (Standard Arabic 101 Layout)
+        const KEY_MAP = {};
+        // Bangun mapping dari data-key tiap tombol
+        document.querySelectorAll('.tombol-arab, .tombol-harakat').forEach(btn => {
+            const key = btn.dataset.key;
+            const arab = btn.dataset.arab;
+            if (key && arab) {
+                KEY_MAP[key] = arab;
+            }
+        });
+
+        // ==========================================
+        // 2. FUNGSI INTI INPUT/OUTPUT
+        // ==========================================
+        function masukkanHuruf(huruf) {
+            const start = layarJawaban.selectionStart;
+            const end = layarJawaban.selectionEnd;
+            const text = layarJawaban.value;
+            
+            // Insert at cursor position
+            layarJawaban.value = text.substring(0, start) + huruf + text.substring(end);
+            
+            // Move cursor after inserted text
+            const newPos = start + huruf.length;
+            layarJawaban.setSelectionRange(newPos, newPos);
+            layarJawaban.focus();
+            
+            updateCharCount();
+        }
+
+        function hapusHuruf() {
+            const start = layarJawaban.selectionStart;
+            const end = layarJawaban.selectionEnd;
+            const text = layarJawaban.value;
+            
+            if (start !== end) {
+                // Delete selection
+                layarJawaban.value = text.substring(0, start) + text.substring(end);
+                layarJawaban.setSelectionRange(start, start);
+            } else if (start > 0) {
+                // Delete character before cursor
+                layarJawaban.value = text.substring(0, start - 1) + text.substring(start);
+                layarJawaban.setSelectionRange(start - 1, start - 1);
+            }
+            
+            layarJawaban.focus();
+            updateCharCount();
+        }
+
+        function updateCharCount() {
+            const len = layarJawaban.value.length;
+            charCount.textContent = `${len} karakter`;
+        }
+
+        // ==========================================
+        // 3. KLIK KURSOR (Mouse Event)
+        // ==========================================
+        // Semua tombol huruf Arab
+        document.querySelectorAll('.tombol-arab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const huruf = btn.dataset.arab;
+                masukkanHuruf(huruf);
+            });
+        });
+
+        // Semua tombol harakat
+        document.querySelectorAll('.tombol-harakat').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const harakat = btn.dataset.arab;
+                masukkanHuruf(harakat);
+            });
+        });
+
+        // Tombol Backspace
+        document.getElementById('btnBackspace').addEventListener('click', () => {
+            hapusHuruf();
+        });
+
+        // Tombol Spasi
+        document.getElementById('btnSpace').addEventListener('click', () => {
+            masukkanHuruf(' ');
+        });
+
+        // Tombol Enter/Jawab
+        document.getElementById('btnEnter').addEventListener('click', () => {
+            handleSubmit();
+        });
+
+        // ==========================================
+        // 4. KEYBOARD FISIK (Keyboard Events)
+        // ==========================================
+        document.addEventListener('keydown', (e) => {
+            // Jangan intercept jika user sedang mengetik langsung di textarea
+            // Kita SELALU intercept untuk mengubah ke huruf Arab
+            
+            const key = e.key;
+            
+            // Handle special keys
+            if (key === 'Backspace') {
+                e.preventDefault();
+                hapusHuruf();
+                highlightKey('Backspace');
+                return;
+            }
+            
+            if (key === 'Enter') {
+                e.preventDefault();
+                handleSubmit();
+                highlightKey('Enter');
+                return;
+            }
+            
+            if (key === ' ') {
+                e.preventDefault();
+                masukkanHuruf(' ');
+                highlightKey(' ');
+                return;
+            }
+            
+            // Cari mapping huruf
+            const arabChar = KEY_MAP[key];
+            if (arabChar) {
+                e.preventDefault();
+                masukkanHuruf(arabChar);
+                highlightKey(key);
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            const key = e.key;
+            // Hapus efek visual
+            unhighlightKey(key);
+            
+            // Also check special keys
+            if (key === 'Backspace' || key === 'Enter' || key === ' ') {
+                unhighlightKey(key);
+            }
+        });
+
+        // ==========================================
+        // 5. VISUAL FEEDBACK
+        // ==========================================
+        function highlightKey(key) {
+            // Cari tombol berdasarkan data-key
+            const el = document.querySelector(`[data-key="${CSS.escape(key)}"]`);
+            if (el) {
+                el.classList.add('pressed');
+            }
+        }
+
+        function unhighlightKey(key) {
+            const el = document.querySelector(`[data-key="${CSS.escape(key)}"]`);
+            if (el) {
+                el.classList.remove('pressed');
+            }
+        }
+
+        // ==========================================
+        // 6. MODE SYSTEM
+        // ==========================================
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+
+            if (mode === 'bebas') {
+                document.getElementById('tabBebas').classList.add('active');
+                challengeArea.classList.remove('active');
+            } else {
+                document.getElementById('tabLatihan').classList.add('active');
+                challengeArea.classList.add('active');
+                latihanIndex = 0;
+                latihanBenar = 0;
+                latihanSalah = 0;
+                updateLatihanUI();
+                loadChallenge();
+            }
+            
+            // Clear input
+            layarJawaban.value = '';
+            updateCharCount();
+        }
+
+        function loadChallenge() {
+            if (latihanIndex >= LATIHAN_KATA.length) {
+                latihanIndex = 0; // Loop
+            }
+            const kata = LATIHAN_KATA[latihanIndex];
+            challengeWord.textContent = kata.arab;
+            challengeMeaning.textContent = `"${kata.arti}"`;
+            challengeResult.style.display = 'none';
+            challengeResult.className = 'challenge-result';
+            layarJawaban.value = '';
+            updateCharCount();
+            layarJawaban.focus();
+        }
+
+        function updateLatihanUI() {
+            document.getElementById('scoreBenar').textContent = latihanBenar;
+            document.getElementById('scoreSalah').textContent = latihanSalah;
+            document.getElementById('scoreSoal').textContent = latihanIndex + 1;
+        }
+
+        // ==========================================
+        // 7. SUBMIT HANDLER
+        // ==========================================
+        function handleSubmit() {
+            if (currentMode === 'bebas') {
+                // Mode bebas - do nothing special on Enter
+                masukkanHuruf('\n');
+                return;
+            }
+
+            // Mode latihan - validasi jawaban
+            const jawaban = layarJawaban.value.trim();
+            if (!jawaban) return;
+
+            const target = LATIHAN_KATA[latihanIndex];
+            // Normalize: Remove harakat for comparison (simpler matching)
+            const normalizeArab = (str) => str.replace(/[\u064B-\u065F\u0670]/g, '').trim();
+            
+            const isBenar = normalizeArab(jawaban) === normalizeArab(target.arab) || jawaban === target.arab;
+
+            if (isBenar) {
+                latihanBenar++;
+                challengeResult.textContent = '✅ Benar! Alhamdulillah!';
+                challengeResult.className = 'challenge-result correct';
+                challengeResult.style.display = 'inline-block';
+            } else {
+                latihanSalah++;
+                challengeResult.textContent = `❌ Jawaban: ${target.arab}`;
+                challengeResult.className = 'challenge-result wrong';
+                challengeResult.style.display = 'inline-block';
+            }
+
+            updateLatihanUI();
+
+            // Next challenge after 1.5 seconds
+            setTimeout(() => {
+                latihanIndex++;
+                loadChallenge();
+            }, 1500);
+        }
+
+        // ==========================================
+        // 8. INIT
+        // ==========================================
+        layarJawaban.addEventListener('input', updateCharCount);
+        // Prevent default typing in the textarea (force virtual keyboard only)
+        layarJawaban.addEventListener('keydown', (e) => {
+            // Allow only selection keys
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Tab'].includes(e.key)) {
+                return;
+            }
+            e.preventDefault();
+        });
+
+        // Focus the input on load
+        layarJawaban.focus();
+    </script>
+</body>
+</html>

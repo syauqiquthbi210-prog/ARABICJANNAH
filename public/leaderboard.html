@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papan Peringkat - Fasih MA</title>
+    <meta name="description" content="Papan peringkat siswa terbaik di platform pembelajaran bahasa Arab Fasih MA. Lihat siapa yang memimpin!">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/leaderboard.css">
+
+    <style>
+        /* ===== NOTIFICATION BELL (reuse dari dashboard) ===== */
+        .notif-bell-wrap { position: relative; }
+        .btn-notif-bell {
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6); width: 40px; height: 40px; border-radius: 12px;
+            cursor: pointer; font-size: 1rem; display: flex; align-items: center;
+            justify-content: center; transition: background 0.2s, color 0.2s; position: relative;
+        }
+        .btn-notif-bell:hover { background: rgba(255,255,255,0.14); color: #fff; }
+        .btn-notif-bell.has-notif { color: #fbbf24; animation: bellRing 1s ease infinite; }
+        @keyframes bellRing {
+            0%,100% { transform: rotate(0deg); } 15% { transform: rotate(14deg); }
+            30% { transform: rotate(-12deg); } 45% { transform: rotate(8deg); }
+            60% { transform: rotate(-6deg); } 75% { transform: rotate(4deg); }
+        }
+        .notif-badge {
+            position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff;
+            font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%;
+            display: none; align-items: center; justify-content: center; border: 2px solid #0f172a;
+        }
+        .notif-dropdown {
+            position: absolute; top: calc(100% + 12px); right: 0; width: 300px;
+            background: #1e293b; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); z-index: 1000;
+            overflow: hidden; display: none; font-family: 'Outfit', sans-serif;
+        }
+        .notif-dropdown.show { display: block; animation: fadeInDown 0.25s ease; }
+        @keyframes fadeInDown { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+        .notif-dropdown-header {
+            padding: 14px 18px; font-weight: 700; font-size: 0.9rem; color: #f1f5f9;
+            border-bottom: 1px solid rgba(255,255,255,0.08); display: flex;
+            align-items: center; justify-content: space-between;
+        }
+        .notif-dropdown-header span { color: #64748b; font-size: 0.78rem; font-weight: 400; cursor: pointer; }
+        .notif-dropdown-header span:hover { color: #0d9488; }
+        .notif-list { max-height: 320px; overflow-y: auto; }
+        .notif-item {
+            padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: flex-start; gap: 12px;
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .notif-item-body { flex: 1; }
+        .notif-item-body p { font-size: 0.85rem; color: #cbd5e1; margin: 0 0 8px 0; line-height: 1.4; }
+        .notif-item-body p strong { color: #f1f5f9; }
+        .btn-follback {
+            background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border: none;
+            border-radius: 8px; padding: 6px 14px; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; font-family: 'Outfit', sans-serif; display: inline-flex;
+            align-items: center; gap: 6px; transition: opacity 0.2s;
+        }
+        .btn-follback:hover { opacity: 0.85; }
+        .notif-empty { padding: 30px 18px; text-align: center; color: #475569; font-size: 0.85rem; }
+        .notif-empty i { font-size: 2rem; opacity: 0.3; display: block; margin-bottom: 8px; }
+
+        /* Active nav style for leaderboard button */
+        .btn-maharah.active-nav {
+            background: rgba(20,184,166,0.15);
+            border-color: rgba(20,184,166,0.3);
+            color: #14B8A6;
+        }
+    </style>
+</head>
+<body class="leaderboard-bg">
+
+    <!-- 1. HEADER (reuse dashboard header) -->
+    <header class="dashboard-header">
+        <div class="container dashboard-header-container">
+            <div class="header-identity">
+                <div class="logo">
+                    <span class="logo-text">Fasih <span class="logo-accent">MA</span></span>
+                </div>
+                <div class="header-greeting">
+                    <span class="greeting-text">لَوْحَةُ الصَّدَارَة</span>
+                    <h2 class="greeting-name">Papan Peringkat</h2>
+                </div>
+            </div>
+
+            <div class="header-tools">
+                <a href="dashboard.html" class="btn-maharah">
+                    <div class="maharah-icon-wrap"><i class="fa-solid fa-house"></i></div>
+                    <span class="maharah-text">Beranda</span>
+                </a>
+                <a href="leaderboard.html" class="btn-maharah active-nav">
+                    <div class="maharah-icon-wrap"><i class="fa-solid fa-ranking-star"></i></div>
+                    <span class="maharah-text">Peringkat</span>
+                </a>
+                <a href="chat.html" class="btn-maharah">
+                    <div class="maharah-icon-wrap"><i class="fa-solid fa-comment-dots"></i></div>
+                    <span class="maharah-text">Maharah Kalam</span>
+                </a>
+
+                <!-- Bell Notifikasi -->
+                <div class="notif-bell-wrap">
+                    <button class="btn-notif-bell" id="notifBellBtn" title="Notifikasi">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notif-badge" id="notifBadge">0</span>
+                    </button>
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-dropdown-header">
+                            <span>🔔 Notifikasi</span>
+                            <span id="markAllReadBtn">Tandai semua dibaca</span>
+                        </div>
+                        <div class="notif-list" id="notifList">
+                            <div class="notif-empty"><i class="fa-solid fa-bell-slash"></i>Tidak ada notifikasi baru.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-menu-container">
+                    <button class="profile-trigger" id="profileDropdownBtn">
+                        <img src="https://ui-avatars.com/api/?name=Siswa&background=0F766E&color=fff" alt="Avatar" class="mini-avatar">
+                        <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <strong>Nama Siswa</strong>
+                            <span>Kelas XI</span>
+                        </div>
+                        <ul>
+                            <li><a href="#"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+                            <li><a href="index.html" class="text-danger" onclick="localStorage.removeItem('fasihUser')"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. MAIN CONTENT -->
+    <main style="padding-bottom: 100px;">
+        <div class="container">
+
+            <!-- Section Title -->
+            <div class="leaderboard-section-title">
+                <h1><i class="fa-solid fa-trophy"></i> Papan Peringkat</h1>
+                <p class="leaderboard-subtitle">Siswa dengan poin belajar tertinggi di Fasih MA</p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="leaderboard-loading" id="loadingState">
+                <i class="fa-solid fa-spinner"></i>
+                <p>Memuat data peringkat...</p>
+            </div>
+
+            <!-- Podium Top 3 -->
+            <section class="podium-section" id="podiumSection" style="display:none;">
+                <div class="podium-row" id="podiumRow">
+                    <!-- Rendered by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Table Rank 4-10 -->
+            <section class="rank-table-section" id="tableSection" style="display:none;">
+                <div class="rank-table-header">
+                    <h2><i class="fa-solid fa-list-ol"></i> Peringkat Lainnya</h2>
+                    <span id="totalPeserta">0 peserta</span>
+                </div>
+                <table class="rank-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px;">#</th>
+                            <th>Nama</th>
+                            <th>Level</th>
+                            <th style="text-align:right;">Poin</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankTableBody">
+                        <!-- Rendered by JavaScript -->
+                    </tbody>
+                </table>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- 3. STICKY BAR: User Rank -->
+    <div class="sticky-rank-bar" id="stickyBar" style="display:none;">
+        <div class="sticky-rank-inner">
+            <div class="sticky-rank-left">
+                <img id="stickyAvatar" src="https://ui-avatars.com/api/?name=U&background=0F766E&color=fff" alt="Avatar" class="sticky-rank-avatar">
+                <div class="sticky-rank-text">
+                    <span class="sticky-rank-name" id="stickyName">Nama Siswa</span>
+                    <span class="sticky-rank-detail">Kamu berada di peringkat <strong id="stickyRankText">#-</strong></span>
+                </div>
+            </div>
+            <div class="sticky-rank-right">
+                <div class="sticky-rank-number">
+                    <span class="rank-label">Rank</span>
+                    <span class="rank-value" id="stickyRankNum">#-</span>
+                </div>
+                <div class="sticky-rank-poin">
+                    <span class="poin-label">Poin</span>
+                    <span class="poin-value" id="stickyPoinNum">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // ==========================================
+        // HELPER FUNCTIONS
+        // ==========================================
+        function avatarUrl(name) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0F766E&color=fff`;
+        }
+
+        // ==========================================
+        // RENDER PODIUM TOP 3
+        // ==========================================
+        function renderPodium(top3) {
+            const podiumRow = document.getElementById('podiumRow');
+            podiumRow.innerHTML = '';
+
+            const podiumConfig = [
+                { class: 'podium-silver', medalIcon: 'fa-medal', rankLabel: 'Peringkat 2', index: 1 },
+                { class: 'podium-gold', medalIcon: 'fa-crown', rankLabel: 'Peringkat 1', index: 0, hasCrown: true },
+                { class: 'podium-bronze', medalIcon: 'fa-medal', rankLabel: 'Peringkat 3', index: 2 }
+            ];
+
+            podiumConfig.forEach(config => {
+                const user = top3[config.index];
+                if (!user) return;
+
+                const card = document.createElement('div');
+                card.className = `podium-card ${config.class}`;
+
+                const crownHtml = config.hasCrown ? '<span class="podium-crown">👑</span>' : '';
+
+                card.innerHTML = `
+                    <div class="podium-medal">
+                        ${crownHtml}
+                        <i class="fa-solid ${config.medalIcon}"></i>
+                    </div>
+                    <span class="podium-rank">${config.rankLabel}</span>
+                    <img src="${avatarUrl(user.nama_lengkap)}" alt="${user.nama_lengkap}" class="podium-avatar">
+                    <div class="podium-name" title="${user.nama_lengkap}">${user.nama_lengkap}</div>
+                    <div class="podium-kelas">Kelas ${user.kelas}</div>
+                    <div class="podium-level"><i class="fa-solid fa-shield-halved"></i> Level ${user.level_aktif || 1}</div>
+                    <div class="podium-poin"><i class="fa-solid fa-star"></i> ${user.poin_belajar} Poin</div>
+                `;
+
+                podiumRow.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // RENDER TABLE RANK 4-10
+        // ==========================================
+        function renderRankTable(data) {
+            const tbody = document.getElementById('rankTableBody');
+            tbody.innerHTML = '';
+
+            // Positions 4-10 (index 3-9)
+            const remaining = data.slice(3);
+
+            if (remaining.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            <div class="rank-empty">
+                                <i class="fa-solid fa-users"></i>
+                                <p>Belum ada data peringkat lainnya.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            remaining.forEach((user, idx) => {
+                const rank = idx + 4;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="rank-num">${rank}</span></td>
+                    <td>
+                        <div class="rank-user-info">
+                            <img src="${avatarUrl(user.nama_lengkap)}" alt="${user.nama_lengkap}" class="rank-avatar">
+                            <div>
+                                <div class="rank-user-name">${user.nama_lengkap}</div>
+                                <div class="rank-user-kelas">Kelas ${user.kelas}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="rank-level-badge"><i class="fa-solid fa-shield-halved"></i> Lv.${user.level_aktif || 1}</span></td>
+                    <td><span class="rank-poin"><i class="fa-solid fa-star"></i> ${user.poin_belajar}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // RENDER STICKY BAR
+        // ==========================================
+        function renderStickyBar(user, ranking, poin) {
+            document.getElementById('stickyAvatar').src = avatarUrl(user.nama_lengkap);
+            document.getElementById('stickyName').textContent = user.nama_lengkap;
+            document.getElementById('stickyRankText').textContent = `#${ranking}`;
+            document.getElementById('stickyRankNum').textContent = `#${ranking}`;
+            document.getElementById('stickyPoinNum').textContent = poin;
+            document.getElementById('stickyBar').style.display = 'block';
+        }
+
+        // ==========================================
+        // UI: Dropdowns
+        // ==========================================
+        const btnProfile = document.getElementById('profileDropdownBtn');
+        const dropdownMenu = document.getElementById('profileDropdown');
+        const notifBellBtn = document.getElementById('notifBellBtn');
+        const notifDropdown = document.getElementById('notifDropdown');
+        const notifBadge = document.getElementById('notifBadge');
+        const notifList = document.getElementById('notifList');
+
+        btnProfile.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); notifDropdown.classList.remove('show'); });
+        notifBellBtn.addEventListener('click', (e) => { e.stopPropagation(); notifDropdown.classList.toggle('show'); dropdownMenu.classList.remove('show'); });
+        document.getElementById('markAllReadBtn').addEventListener('click', () => {
+            notifList.querySelectorAll('[data-notif-id]').forEach(item => {
+                fetch(`/api/notifikasi/baca/${item.dataset.notifId}`, { method: 'POST' });
+                item.remove();
+            });
+            updateBadge(0);
+            notifList.innerHTML = '<div class="notif-empty"><i class="fa-solid fa-bell-slash"></i>Tidak ada notifikasi baru.</div>';
+        });
+        window.addEventListener('click', (e) => {
+            if (!dropdownMenu.contains(e.target)) dropdownMenu.classList.remove('show');
+            if (!notifDropdown.contains(e.target) && e.target !== notifBellBtn) notifDropdown.classList.remove('show');
+        });
+
+        // Notifications
+        let totalUnread = 0;
+        function updateBadge(count) {
+            totalUnread = count;
+            if (count > 0) { notifBadge.style.display = 'flex'; notifBadge.innerText = count > 9 ? '9+' : count; notifBellBtn.classList.add('has-notif'); }
+            else { notifBadge.style.display = 'none'; notifBellBtn.classList.remove('has-notif'); }
+        }
+        function renderNotifItem(notif) {
+            const avatarSrc = `https://ui-avatars.com/api/?name=${encodeURIComponent(notif.nama_pengirim)}&background=0F766E&color=fff`;
+            const div = document.createElement('div');
+            div.className = 'notif-item'; div.dataset.notifId = notif.id;
+            div.innerHTML = `<img src="${avatarSrc}" alt="${notif.nama_pengirim}" class="notif-item-avatar"><div class="notif-item-body"><p><strong>${notif.nama_pengirim}</strong> ingin mengikutimu. Follback untuk bisa chat!</p><button class="btn-follback" onclick="doFollback(${notif.pengirim_id}, this.closest('.notif-item'), ${notif.id})"><i class="fa-solid fa-user-check"></i> Follback</button></div>`;
+            return div;
+        }
+        async function loadNotifikasi(userId) {
+            try { const res = await fetch(`/api/notifikasi/${userId}`); const data = await res.json();
+                if (data.success && data.notifikasi.length > 0) { notifList.innerHTML = ''; data.notifikasi.forEach(n => notifList.appendChild(renderNotifItem(n))); updateBadge(data.notifikasi.length); } else { updateBadge(0); }
+            } catch(e) { console.error('Gagal load notif:', e); }
+        }
+        async function doFollback(pengikutId, itemEl, notifId) {
+            const btn = itemEl.querySelector('.btn-follback'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...'; btn.disabled = true;
+            try { const localUser = JSON.parse(localStorage.getItem('fasihUser'));
+                const res = await fetch('/api/follow', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pengikut_id: localUser.id, diikuti_id: pengikutId }) });
+                const data = await res.json();
+                if (data.success) { await fetch(`/api/notifikasi/baca/${notifId}`, { method: 'POST' }); itemEl.remove(); totalUnread = Math.max(0, totalUnread - 1); updateBadge(totalUnread);
+                    if (notifList.children.length === 0) { notifList.innerHTML = '<div class="notif-empty"><i class="fa-solid fa-bell-slash"></i>Tidak ada notifikasi baru.</div>'; }
+                }
+            } catch(e) { btn.innerHTML = '<i class="fa-solid fa-user-check"></i> Follback'; btn.disabled = false; }
+        }
+
+        // ==========================================
+        // MAIN INIT
+        // ==========================================
+        window.onload = async () => {
+            const localSession = localStorage.getItem('fasihUser');
+            if (!localSession) { window.location.href = 'register.html'; return; }
+
+            const parsedUser = JSON.parse(localSession);
+            let activeUser = parsedUser;
+
+            // Session recovery
+            if (!parsedUser.id && parsedUser.email) {
+                try { const r = await fetch(`/api/user/email/${encodeURIComponent(parsedUser.email)}`); const d = await r.json();
+                    if (d.success) { parsedUser.id = d.user.id; localStorage.setItem('fasihUser', JSON.stringify(parsedUser)); activeUser = parsedUser; }
+                } catch (e) { console.warn("Session recovery failed:", e); }
+            }
+
+            // Fetch fresh data from DB
+            if (parsedUser.id) {
+                try { const r = await fetch(`/api/user/${parsedUser.id}`); const d = await r.json();
+                    if (d.success) { activeUser = d.user; localStorage.setItem('fasihUser', JSON.stringify(activeUser)); }
+                } catch (e) { console.warn("Failed to refresh user:", e); }
+            }
+
+            // Socket.io
+            const socket = io();
+            socket.emit('user_online', activeUser.id);
+            socket.on('notif_follow', (payload) => {
+                const emptyEl = notifList.querySelector('.notif-empty'); if (emptyEl) emptyEl.remove();
+                notifList.prepend(renderNotifItem({ id: Date.now(), nama_pengirim: payload.nama_pengirim, pengirim_id: payload.pengikut_id }));
+                updateBadge(totalUnread + 1); notifDropdown.classList.add('show');
+            });
+            loadNotifikasi(activeUser.id);
+
+            // --- UPDATE HEADER UI ---
+            document.querySelector('.dropdown-header strong').innerText = activeUser.nama_lengkap;
+            document.querySelector('.dropdown-header span').innerText = `Kelas ${activeUser.kelas || 'Semester 1'}`;
+            document.querySelector('.mini-avatar').src = avatarUrl(activeUser.nama_lengkap);
+
+            // --- LOAD LEADERBOARD DATA ---
+            try {
+                const [lbRes, rankRes] = await Promise.all([
+                    fetch('/api/leaderboard'),
+                    fetch(`/api/leaderboard/rank/${activeUser.id}`)
+                ]);
+                const lbData = await lbRes.json();
+                const rankData = await rankRes.json();
+
+                // Hide loading
+                document.getElementById('loadingState').style.display = 'none';
+
+                if (lbData.success && lbData.leaderboard.length > 0) {
+                    // Render Podium Top 3
+                    renderPodium(lbData.leaderboard.slice(0, 3));
+                    document.getElementById('podiumSection').style.display = 'block';
+
+                    // Render Table 4-10
+                    if (lbData.leaderboard.length > 3) {
+                        renderRankTable(lbData.leaderboard);
+                        document.getElementById('tableSection').style.display = 'block';
+                    }
+
+                    // Total peserta count
+                    document.getElementById('totalPeserta').textContent = `${lbData.leaderboard.length} peserta`;
+                }
+
+                // Render Sticky Bar
+                if (rankData.success) {
+                    renderStickyBar(activeUser, rankData.ranking, rankData.poin_belajar || 0);
+                }
+
+            } catch (err) {
+                console.error('Gagal memuat leaderboard:', err);
+                document.getElementById('loadingState').innerHTML = `
+                    <i class="fa-solid fa-exclamation-triangle" style="color:#EF4444; animation:none;"></i>
+                    <p>Gagal memuat data. Silakan coba lagi.</p>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>
